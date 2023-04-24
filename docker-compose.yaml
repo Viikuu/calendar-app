@@ -1,0 +1,30 @@
+version: '3.4'
+services:
+  app:
+    container_name: app_backend
+    restart: always
+    build: ./backend
+    environment:
+        - DATABASE_HOST=mongodb://mongo:27017/todos
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./backend:/data
+    depends_on:
+      - mongo
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo:4.4.6
+    volumes:
+      - /data/db
+    ports:
+      - '27017:27017'
+  front:
+    container_name: app_frontend
+    build: ./frontend
+    volumes:
+      -  ./frontend:/data
+    ports:
+      - '5137:5137'
