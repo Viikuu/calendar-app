@@ -8,6 +8,6 @@ RUN npm i
 
 VOLUME [ "/data" ]
 
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["npm", "run", "dev"]

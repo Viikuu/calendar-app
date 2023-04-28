@@ -1,13 +1,11 @@
 FROM node:alpine
 
-WORKDIR /data
+WORKDIR /app
 
 COPY package.json .
 
 RUN npm i
 
-VOLUME [ "/data" ]
-
-EXPOSE 5173
+COPY . .
 
 CMD ["npm", "run", "dev"]
