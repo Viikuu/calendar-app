@@ -1,51 +1,118 @@
 
 .background-container {
   background-image: linear-gradient(90deg, rgba(124, 3, 90, 1) 0%, rgba(60, 9, 121, 1) 43%, rgba(0, 212, 255, 1) 100%);
-width: 100%;
-  height: 500px;
+  width: 100%;
+  height: 100%;
+  position:absolute;
 }
 
 .calendar-container {
   width: 55%;
   margin:auto;
   position: relative;
-  top: -500px;
-  padding-top:200px;
+  padding-top:100px;
 }
+
 
 .weekdays-container {
   display: flex;
   margin: auto;
   justify-content: space-around;
-  background:#625c6a;
+  border: 2px solid #FFFFFF;
+  border-radius: 20px;
   padding: 5px;
-  
 }
 
 .weekdays-container .week-day {
   color: white;
 }
 
+.month-nav-container {
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+  padding: 5px;
+}
+
+.month-nav-info {
+  margin-left:10px;
+  width: 10em;
+  font-size: 25px;
+  font-weight: 1000;
+}
+
+.month-nav-container div {
+  margin-right: 10px;
+}
+
+.month-nav-container button {
+  background-color: rgba(221, 216, 216, 0);
+  border-radius: 8px;
+  border-width: 2px;
+  border-color: #FFFFFF;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  margin: 0;
+  margin-right: 10px;
+  padding: 10px 20px;
+  text-align: center;
+  transition: all 200ms;
+  vertical-align: baseline;
+  white-space: nowrap;
+  user-select: none;
+}
+
+
+
 .calendar {
   width: 100%;
-    margin: auto;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+  padding:5px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+
+.week-day {
+  justify-self: center;
 }
 
 .calendarDays {
-  width: 13%;
-  padding: 10px;
+  padding: 12px;
   height: 100px;
+  margin: auto;
   cursor: pointer;
   box-sizing: border-box;
-  
   margin: 5px;
   box-shadow: 0px 0px 3px #CBD4C2;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  cursor: default !important;
-  box-shadow: none !important;
+  border: 2px solid #FFFFFF;
+  border-radius: 20px;
+}
+
+.selected {
+  border: 8px solid #FFFFFF;
+  font-weight: bold;
+}
+
+.noActive {
+  border: 2px solid #6464647c;
+  color: #6464647c; 
+}
+
+.isToday {
+  color:rgba(0, 212, 255, 1);
+  border-color: rgba(0, 212, 255, 1);
+}
+
+.dayComponent {
+  background-color: rgba(255, 255, 255, 0.13);
 }

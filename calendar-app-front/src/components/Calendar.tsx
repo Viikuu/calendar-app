@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CalendarDate, Weekday } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
+import { Day } from "./Day";
 
 export const Calendar: React.FC = () => {
   
   //const [nav, setNav] = useState<number>(0);
-  //const [selected, setSelected] = useState(null);
+  
   //const [events, setEvents] = useState([]);
+  const [selected, setSelected] = useState<CalendarDate|null>(null);
   const [year, setYear] = useState<number>((new Date).getFullYear());
   const [month, setMonth] = useState<number>((new Date).getMonth());
   const [calendarDays, setCalendarDays] = useState<CalendarDate[]>([]);
@@ -36,7 +38,7 @@ export const Calendar: React.FC = () => {
     
     const calDays: CalendarDate[] = [];
 
-    for (let i = 1; i < daysInMonth + paddingDays; i++) {
+    for (let i = 0; i < daysInMonth + paddingDays; i++) {
       if (i < paddingDays) {
         const d = daysInPrevMonth - paddingDays + i
         const m = thisMonth - 1 === -1 ? 11 : thisMonth  - 1;
@@ -60,6 +62,13 @@ export const Calendar: React.FC = () => {
     }
     setCalendarDays(calDays);
   }
+
+  function isToday(dt: CalendarDate): boolean {
+    const today = new Date();
+    return today.getDate() === dt.day &&
+      today.getMonth() === dt.month &&
+      today.getFullYear() === dt.year;
+  }
   
   useEffect(() => {
     const dt = new Date();
@@ -68,7 +77,6 @@ export const Calendar: React.FC = () => {
 
   useEffect(() => {
     const dt = new Date(year, month);
-    console.log(month);
     genDays(dt);
   }, [year, month]);
 
@@ -83,25 +91,36 @@ export const Calendar: React.FC = () => {
     <div className="calendar-container">
       <div className="datepicker-container">
 
-      </div>
-      <div className="month-nav-container">
-        <button onClick={decreaseMonth}> {' < '}</button>
-        {Months[month]}
-        <button onClick={increaseMonth}> {' > '} </button>
-      </div>
+        <div className="month-nav-container">
+          <div className="month-nav-info"> {year}, {Months[month]} </div>
+          <div>
+            <button onClick={decreaseMonth}> {' < '}</button>
+            <button onClick={increaseMonth}> {' > '} </button>
+          </div>
+        </div>
 
-      <div className="weekdays-container">
-        { Weekdays.map(day => (
-          <div key={day} className="week-day"> {day} </div>
-        ))}
-      </div>
-      <div className="calendar">
-        { calendarDays.length !== 0 && calendarDays.map(date => (
-          <div key={[date.day, date.month, date.year].join('.')}
-            className={'calendarDays'}
-          > {date.day} </div>
-          ))
-        }
+        <div className="weekdays-container">
+          { Weekdays.map(day => (
+            <div key={day} className="week-day"> {day} </div>
+          ))}
+        </div>
+        <div className="calendar">
+          {calendarDays.length !== 0 && calendarDays.map(date => (
+            <div key={[date.day, date.month, date.year].join('.')}
+              id={[date.day, date.month, date.year].join('.')}
+              className={`calendarDays ${!date.active ? 'noActive': ''} ${selected === date ? 'selected': ''} ${isToday(date) ? 'isToday': ''}`}
+              onClick={
+                (e) => {
+                  const thisDate = e.target.id.split('.');
+                  const thisCalendarDate = calendarDays.find((day: CalendarDate) =>  day.day == thisDate[0] && day.month == thisDate[1] && day.year == thisDate[2]) as CalendarDate;
+                  setSelected(thisCalendarDate);
+                }
+              }
+            > {date.day} </div>
+            ))
+            
+          }
+        </div>
       </div>
     </div>
   )
