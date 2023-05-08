@@ -122,6 +122,7 @@ export const Calendar: React.FC = () => {
           }
         </div>
       </div>
+      {selected !== null ? <Day selected = {selected} setSelected = {setSelected} />: ""}
     </div>
   )
 }
