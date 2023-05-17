@@ -1,0 +1,104 @@
+.dayComponent {
+  background-color: #996f371c;
+  width: 35%;
+  border-radius: 2%;
+  margin-left:auto;
+  margin-right:auto;
+  padding:3em;
+  display: flex;
+  flex-direction: column;
+}
+
+.xButton {
+  background-color: #fbeec1;
+  width:30px;
+  height: 30px;
+  border-radius: 15px;
+  box-sizing: border-box;
+  font-weight: 900;
+  color: #bc986a;
+  cursor: pointer;
+  margin:10px;
+  
+}
+
+.dayHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dayItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dayItemTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.dayItemTitle label {
+  margin:10px;
+}
+
+.color {
+  background-color: inherit;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+}
+.dayEvent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  margin:15px;
+  border-radius: 15px;
+  -webkit-box-shadow: 11px 8px 12px -10px rgba(8, 12, 60, 1);
+    -moz-box-shadow: 11px 8px 12px -10px rgba(8, 12, 60, 1);
+    box-shadow: 11px 8px 12px -10px rgba(8, 12, 60, 1);
+}
+
+.dayEventContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dayEventDescription {
+  display: flex;
+  align-items: center;
+  
+}
+.dayEventDescription input{
+  width: 90%;
+}
+
+.time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+}
+
+.time input {
+  width: 40px;
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.addNewEventButt {
+  display: flex;
+  justify-content: center;
+}

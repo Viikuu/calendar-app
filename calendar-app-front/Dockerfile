@@ -6,6 +6,6 @@ COPY package.json .
 
 RUN npm i
 
-COPY . .
+VOLUME [ "/app" ]
 
 CMD ["npm", "run", "dev"]

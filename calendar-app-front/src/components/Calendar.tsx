@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CalendarDate, Weekday } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
-import { Day } from "./Day";
+import { Day } from "./Day/Day";
 
 export const Calendar: React.FC = () => {
   
@@ -113,7 +113,11 @@ export const Calendar: React.FC = () => {
                 (e) => {
                   const thisDate = e.target.id.split('.');
                   const thisCalendarDate = calendarDays.find((day: CalendarDate) =>  day.day == thisDate[0] && day.month == thisDate[1] && day.year == thisDate[2]) as CalendarDate;
-                  setSelected(thisCalendarDate);
+                  if (thisCalendarDate === selected) {
+                    setSelected(null);
+                  } else {
+                    setSelected(thisCalendarDate);
+                  }
                 }
               }
             > {date.day} </div>
