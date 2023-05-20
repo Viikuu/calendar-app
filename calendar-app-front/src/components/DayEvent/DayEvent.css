@@ -1,0 +1,68 @@
+.dayEvent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 10px;
+  margin: 15px;
+  border-radius: 15px;
+  background-color: #659dbd;
+
+}
+
+.dayEvent input {
+  border: none;
+  background-color: white;
+  display: inline-block;
+  padding: 4px;
+  border-radius: 10px;
+  color: black;
+}
+
+.dayEventContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between
+}
+
+.dayEventDescription {
+  display: flex;
+  align-items: center;
+
+}
+
+.dayEventDescription input {
+  width: 90%;
+}
+
+.time {
+  flex-grow: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5em;
+  font-weight: bold;
+}
+
+.time select {
+  padding: 1em;
+  border: none;
+  background-color: white;
+  display: inline-block;
+  border-radius: 10px;
+  color: black;
+  margin: 5px;
+}
+
+.dot {
+  height: 2.5em;
+  width: 2.5em;
+  border: none;
+  border-radius: 50%;
+  background: #D11A2A;
+  cursor: pointer;
+}
+
+.addNewEventButt {
+  display: flex;
+  justify-content: center;
+}
