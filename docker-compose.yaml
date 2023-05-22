@@ -1,28 +1,42 @@
 version: '3.9'
 services:
-  # app:
-  #   container_name: app_backend
-  #   restart: always
-  #   build: ./backend
-  #   environment:
-  #       - DATABASE_HOST=mongodb://mongo:27017/todos
-  #   ports:
-  #     - '5000:5000'
-  #   volumes:
-  #     - ./backend:/data
-  #   depends_on:
-  #     - mongo
-  #   links:
-  #     - mongo
-  # mongo:
-  #   volumes:
-  #     - /data/db
-  #   ports:
-  #     - '27017:27017'
+  app:
+    container_name: app_backend
+    restart: always
+    build: ./calendar-app-backend
+    environment:
+        - DATABASE_HOST=mongodb://user:pass@mongodb/calendarApp
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./calendar-app-backend:/data
+    depends_on:
+      - mongodb
+    networks:
+      - frontend
+      - backend
+  mongodb:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=user
+      - MONGODB_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - backend
   front:
     build: ./calendar-app-front
+    environment:
+        - SERVER=mongodb://
     volumes:
       - ./calendar-app-front:/app
     ports:
       - "80:80"
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
   

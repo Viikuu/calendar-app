@@ -2,11 +2,13 @@
   background-color: #996f371c;
   width: 35%;
   border-radius: 2%;
-  margin-left:auto;
-  margin-right:auto;
+  margin:3em;
+  margin-top: 0;
   padding:3em;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  position:relative;
 }
 
 .xButton {
@@ -61,4 +63,19 @@
   font-size: xx-large;
   font-weight: 900;
   cursor:pointer;
+}
+
+.scroll {
+  position: absolute;
+  padding: 3em;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin:20px;
+  left: 0;
+  top: 15%;
+  right: 0;
+  bottom: 5%;
+  
+  overflow-y: auto;
+    
 }

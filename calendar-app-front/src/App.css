@@ -18,8 +18,10 @@
   background-color: #bc986a1c;
   border-radius:2%;
   width: 50%;
-  margin:auto;
+  margin: 3em;
+  margin-top:0;
   padding:3em;
+  height: 70%;
 }
 
 
@@ -128,4 +130,11 @@
 
 svg {
   width: 1em;
+}
+
+.inDayEvents {
+  display:flex;
+  gap:5px;
+  padding-top: 5px;
+  flex-wrap: wrap;
 }
