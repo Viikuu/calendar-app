@@ -13,13 +13,13 @@ import {
 } from './eventOpts.mjs';
 
 export const eventRouter = async (fastify, opts, done) => {
-  fastify.get('/', getEventsOpts, getEvents);
+  await fastify.get('/', getEventsOpts, getEvents);
 
-  fastify.post('/', createEventsOpts, createEvent);
+  await fastify.post('/', createEventsOpts, createEvent);
 
-  fastify.put('/:id', updateEventsOpts, updateEvent);
+  await fastify.put('/:id', updateEventsOpts, updateEvent);
 
-  fastify.delete('/:id', deleteEventsOpts, deleteEvent);
+  await fastify.delete('/:id', deleteEventsOpts, deleteEvent);
 
   done();
 };

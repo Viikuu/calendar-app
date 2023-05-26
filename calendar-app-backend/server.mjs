@@ -38,22 +38,14 @@ fastify.register(fastifyJwt, {
   secret: fastify.config.SECRET,
 });
 
-fastify.register(eventRouter, { prefix: 'events' });
+fastify.register(async (fastify, opts, done) => {
+  await fastify.register(eventRouter, { prefix: 'events' });
 
-fastify.get('/ping', async (request, reply) => {
-  return { pong: 'it worked!' };
-});
+  await fastify.get('/ping', async (request, reply) => {
+    return { pong: 'it worked!' };
+  });
 
-fastify.setErrorHandler(function (error, request, reply) {
-  if (error instanceof Fastify.errorCodes.FST_ERR_BAD_STATUS_CODE) {
-    // Log error
-    this.log.error(error);
-    // Send error response
-    reply.status(500).send({ ok: false });
-  } else {
-    // fastify will use parent error handler to handle this
-    reply.send(error);
-  }
+  done();
 });
 
 const start = async () => {
