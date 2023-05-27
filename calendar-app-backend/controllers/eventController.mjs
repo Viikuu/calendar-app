@@ -15,11 +15,11 @@ export async function getEvents(request, reply) {
 export async function createEvent(request, reply) {
   try {
     const { event } = request.body;
-    const newEvent = await new EventModel({
+    const newEvent = new EventModel({
       //userId,
       ...event,
     });
-    return newEvent.save();
+    return await newEvent.save();
   } catch {
     throw new Error('Something went wrong! Try again');
   }

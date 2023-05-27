@@ -3,6 +3,7 @@ import fastifyEnv from '@fastify/env';
 import fastifyJwt from '@fastify/jwt';
 import { eventRouter } from './routes/Event/eventRoute.mjs';
 import { mongooseConn } from './db/index.mjs';
+import { authRouter } from './routes/Auth/authRoute.mjs';
 const fastify = Fastify({ logger: true });
 
 await fastify.register(fastifyEnv, {
@@ -39,9 +40,11 @@ fastify.register(fastifyJwt, {
 });
 
 fastify.register(async (fastify, opts, done) => {
+  await fastify.register(authRouter, { prefix: 'auth' });
+
   await fastify.register(eventRouter, { prefix: 'events' });
 
-  await fastify.get('/ping', async (request, reply) => {
+  fastify.get('/ping', async (request, reply) => {
     return { pong: 'it worked!' };
   });
 
