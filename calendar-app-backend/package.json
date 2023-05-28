@@ -17,7 +17,8 @@
     "@fastify/jwt": "^7.0.0",
     "bcrypt": "^5.1.0",
     "fastify": "^4.17.0",
-    "mongoose": "^7.2.1"
+    "mongoose": "^7.2.1",
+    "mongoose-unique-validator": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.2.3"

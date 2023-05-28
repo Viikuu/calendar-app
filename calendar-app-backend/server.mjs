@@ -1,9 +1,12 @@
 import Fastify from 'fastify';
 import fastifyEnv from '@fastify/env';
 import fastifyJwt from '@fastify/jwt';
+import fastifyCookie from '@fastify/cookie';
+import fastifyAuth from '@fastify/auth';
 import { eventRouter } from './routes/Event/eventRoute.mjs';
 import { mongooseConn } from './db/index.mjs';
 import { authRouter } from './routes/Auth/authRoute.mjs';
+
 const fastify = Fastify({ logger: true });
 
 await fastify.register(fastifyEnv, {
@@ -35,9 +38,25 @@ fastify.register(mongooseConn, {
   uri: fastify.config.DATABASE_HOST,
 });
 
+fastify.register(fastifyAuth);
+
 fastify.register(fastifyJwt, {
   secret: fastify.config.SECRET,
+  cookie: {
+    cookieName: 'token',
+    signed: false,
+  },
 });
+
+fastify.decorate('authenticate', async function (request, reply) {
+  try {
+    await request.jwtVerify();
+  } catch (err) {
+    reply.send(err);
+  }
+});
+
+fastify.register(fastifyCookie);
 
 fastify.register(async (fastify, opts, done) => {
   await fastify.register(authRouter, { prefix: 'auth' });
