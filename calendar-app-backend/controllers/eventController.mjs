@@ -1,9 +1,10 @@
 import { EventModel } from '../db/models/Events.mjs';
+const { errorCodes } = 'fastify';
 
 export async function getEvents(request, reply) {
   try {
     const eventData = await EventModel.find({
-      //userId: request.user._id,
+      userId: request.user._id,
     }).exec();
 
     return { events: eventData };
@@ -16,10 +17,12 @@ export async function createEvent(request, reply) {
   try {
     const { event } = request.body;
     const newEvent = new EventModel({
-      //userId,
+      userId: request.user._id,
       ...event,
     });
-    return await newEvent.save();
+    return {
+      event: await newEvent.save(),
+    };
   } catch {
     throw new Error('Something went wrong! Try again');
   }
@@ -32,7 +35,7 @@ export async function updateEvent(request, reply) {
     const existingEvent = await EventModel.findOneAndUpdate(
       {
         _id: id,
-        //userId,
+        userId: request.user._id,
       },
       event,
       {
@@ -41,9 +44,10 @@ export async function updateEvent(request, reply) {
     ).exec();
 
     if (!existingEvent) {
-      return null;
+      reply.code(errorCodes.FST_ERR_NOT_FOUND);
+      return {};
     }
-    return existingEvent;
+    return { event: existingEvent };
   } catch {
     throw new Error('Something went wrong! Try again');
   }
@@ -54,14 +58,14 @@ export async function deleteEvent(request, reply) {
     const { id } = request.params;
     const deletedEvent = await EventModel.findOneAndDelete({
       _id: id,
-      //userId,
+      userId: request.user._id,
     }).exec();
 
     if (!deletedEvent) {
-      reply.code(404);
+      reply.code(errorCodes.FST_ERR_NOT_FOUND);
       return {};
     }
-    return deletedEvent;
+    return { event: deletedEvent };
   } catch {
     throw new Error('Something went wrong! Try again');
   }

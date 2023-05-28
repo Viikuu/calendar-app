@@ -13,6 +13,8 @@ import {
 } from './eventOpts.mjs';
 
 export const eventRouter = async (fastify, opts, done) => {
+  fastify.addHook('onRequest', fastify.auth([fastify.authenticate]));
+
   await fastify.get('/', getEventsOpts, getEvents);
 
   await fastify.post('/', createEventsOpts, createEvent);
