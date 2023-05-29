@@ -1,1 +1,1 @@
-export const mainRoute = 'http://localhost:3000/'
+export const mainRoute = 'http://localhost:3000';

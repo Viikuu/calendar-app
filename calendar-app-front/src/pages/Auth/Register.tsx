@@ -4,6 +4,7 @@ import {toast, ToastContainer, ToastOptions} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { mainRoute } from '../../utils/roots';
+import { userData } from '../../utils/types';
 
 export function Register() {
 	const navigate = useNavigate();
@@ -23,21 +24,31 @@ export function Register() {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if(handleValidation()){
-			const {password, email} = values;
-			const {data} = await axios.post(mainRoute, JSON.stringify({
-				email,
-				password,
-			}), {
-				headers: {
-					"Content-Type": "application/json",
+		if (handleValidation()) {
+			try {
+				const { password, email } = values;
+				const {data} = await axios.post<userData>([mainRoute, 'auth'].join('/'), JSON.stringify({
+					email,
+					password,
+				}), {
+					headers: {
+						"Content-Type": "application/json",
+					}
+				});
+				console.log(data);
+				if (data.user) {
+					navigate('/');
 				}
-			});
-			if(data.status === false) {
-				toast.error(data.message,toastOptions);
-			}
-			if(data.status === true) {
-				navigate('/');
+			} catch (error) {
+				if (axios.isAxiosError(error)) {
+					if (error.response) {
+						toast.error(error.response.data.message, toastOptions);
+					} else {
+						toast.error(error.message, toastOptions);
+					}
+				} else {
+					toast.error(['unexpected error: ', error].join(' '), toastOptions);
+				}
 			}
 		}
 
