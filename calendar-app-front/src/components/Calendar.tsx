@@ -20,8 +20,6 @@ export const Calendar: React.FC = () => {
     const thisDay = dt.getDate();
     const thisMonth = dt.getMonth();
     const thisYear = dt.getFullYear();
-    const a = process.env.REACT_APP_MY_ENV_VARIABLE
-    await
     
     setMonth(thisMonth);
     setYear(thisYear);

@@ -1,0 +1,77 @@
+.FormContainer {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+  background-color: #1a1a1d;
+}
+
+.FormContainer .form-brand {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+.FormContainer .form-brand img {
+  height: 5rem;
+}
+
+.FormContainer .form-brand h1 {
+  color: white;
+}
+
+.FormContainer form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 25%;
+  gap: 2rem;
+  align-items: center;
+  background-color: #bc986a1c;
+  padding: 3rem 5rem;
+  border-radius: 2%;
+}
+
+.FormContainer form input {
+  background-color: transparent;
+  padding: 1rem;
+  border: 0.1rem solid #FFFFFF;
+  border-radius: 0.5rem;
+  color: white;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.FormContainer form input:focus {
+  border: 0.1rem solid #659dbd;
+  outline: none;
+}
+
+.FormContainer form button {
+  background-color: #659dbd;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+
+.FormContainer form button:hover {
+  background-color: #659dbdb0;
+}
+
+.FormContainer span {
+  color: white;
+}
+
+.FormContainer span a {
+  color: #659dbd;
+  text-decoration: none;
+  font-weight: bold;
+}
