@@ -1,5 +1,5 @@
 import {Link, useNavigate} from 'react-router-dom';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {toast, ToastContainer, ToastOptions} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -22,6 +22,19 @@ export function Register() {
 		theme: 'dark'
 	};
 
+	useEffect(() => {
+		async function chechAuth():Promise<boolean> {
+			try {
+				const { data } = await axios.get<userData>([mainRoute, 'auth'].join('/'), { withCredentials: true });
+				return true;
+			} catch (error) {
+				return false;
+			}
+		}
+		chechAuth().then(value => value && navigate('/') ) 
+		
+  }, []);
+
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (handleValidation()) {
@@ -33,7 +46,8 @@ export function Register() {
 				}), {
 					headers: {
 						"Content-Type": "application/json",
-					}
+					},
+					withCredentials: true,
 				});
 				console.log(data);
 				if (data.user) {

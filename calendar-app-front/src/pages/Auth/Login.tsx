@@ -22,6 +22,19 @@ export function Login() {
 		theme: 'dark'
 	};
 
+	useEffect(() => {
+		async function chechAuth():Promise<boolean> {
+			try {
+				const { data } = await axios.get<userData>([mainRoute, 'auth'].join('/') , { withCredentials: true });
+				return true;
+			} catch (error) {
+				return false;
+			}
+		}
+		chechAuth().then(value => value && navigate('/') ) 
+		
+  }, []);
+
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if(handleValidation()){
@@ -33,7 +46,8 @@ export function Login() {
 				}), {
 					headers: {
 						"Content-Type": "application/json",
-					}
+					},
+					withCredentials: true,
 				});
 				if (data.user) {
 					navigate('/');
@@ -77,7 +91,7 @@ export function Login() {
 					<h1>Login</h1>
 				</div>
 				<input
-					type="text"
+					type="email"
 					placeholder="Email"
 					name="email"
 					onChange={(event) => handleChange(event)}
