@@ -3,6 +3,8 @@ import { CalendarDate, DayEventI, Weekday } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
 import { Day } from "./Day/Day";
 import { Dot } from "./Dot/Dot";
+import axios from "axios";
+import { mainRoute } from "../utils/roots";
 
 export const Calendar: React.FC = () => {
   
@@ -16,6 +18,9 @@ export const Calendar: React.FC = () => {
 
   const prevSelectedRef = useRef<CalendarDate | null>(null);
 
+  interface getEvents {
+    events: Array<DayEventI>
+  }
   async function genDays(dt: Date) {
     const thisDay = dt.getDate();
     const thisMonth = dt.getMonth();
@@ -73,17 +78,27 @@ export const Calendar: React.FC = () => {
       today.getMonth() === dt.month &&
       today.getFullYear() === dt.year;
   }
+
+  async function getEvents() {
+      try {
+        const { data } = await axios.get<getEvents>([mainRoute, 'events'].join('/'), { withCredentials: true });
+        setEvents(data.events);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   
   useEffect(() => {
     const dt = new Date();
     setYear(dt.getFullYear());
     setMonth(dt.getMonth());
+    getEvents();
   }, []);
 
   useEffect(() => {
     const dt = new Date(year, month);
     genDays(dt);
-  }, [year, month,events]);
+  }, [year, month, events]);
 
   useEffect(() => {
     if (selected !== null && prevSelectedRef.current !== null) {
@@ -94,10 +109,12 @@ export const Calendar: React.FC = () => {
 
   const decreaseMonth = () => {
     setMonth(() => month - 1);
+    getEvents()
   }
 
   const increaseMonth = () => {
     setMonth(() => month + 1);
+    getEvents()
   }
   return (
     <div className="calendar-container">

@@ -3,6 +3,8 @@ import { CalendarDate, Weekday, Month } from '../../utils/types';
 import './Day.css';
 import { Months, Weekdays } from "../../configs/Weekdays";
 import { DayEvent, DayEventI } from '../DayEvent/DayEvent';
+import axios from "axios";
+import { mainRoute } from "../../utils/roots";
 
 interface DayProps {
   selected: CalendarDate,
@@ -32,7 +34,16 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map((el) => el.id == event.target.id ? { ...el, title }: el),
+        ...selected.events.map(async(el) => {
+          if (el.id == event.target.id) {
+            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+                event: { title },
+              }, { withCredentials: true,
+            })
+            return { ...el, title }
+          }
+          return el;
+        }),
         ],
       });
   }
@@ -42,12 +53,24 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map((el) => el.id == event.target.id ? { ...el, description }: el),
+        ...selected.events.map(async(el) => {
+          if (el.id == event.target.id) {
+            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+                event: { description },
+              }, { withCredentials: true
+            })
+            return { ...el, description }
+          }
+          return el;
+        }),
         ],
       });
   }
 
-  const onEventDelete = (id:string) => {
+  const onEventDelete = async (id: string) => {
+    await axios.delete([mainRoute, 'events', id].join('/'), {
+             withCredentials: true
+            })
     setSelected({
       ...selected,
       events: [
@@ -61,17 +84,37 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map((el) => el.id == event.target.id ? { ...el, time: {...el.time, minute} }: el),
+        ...selected.events.map(async(el) => {
+          if (el.id == event.target.id) {
+            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+                event: { time: { ...el.time, minute } },
+              },{ withCredentials: true }
+            )
+            return { ...el, time: { ...el.time, minute } }
+          }
+          return el;
+        }),
         ],
       });
   }
 
-  const onHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onHourChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const hour = event.target.value;
+    
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map((el) => el.id == event.target.id ? { ...el, time: {...el.time, hour} }: el),
+        ...selected.events.map(async (el) => {
+          if (el.id == event.target.id) {
+            await axios.put([mainRoute, 'events', event.target.id].join('/'), 
+              {
+                event: { time: { ...el.time, hour } },
+              }, { withCredentials: true }
+            )
+            return { ...el, time: { ...el.time, hour } }
+          }
+          return el
+        }),
         ],
       });
   }
@@ -95,24 +138,29 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
       ))}
       {selected.events.length < 8 ?
         <div className="addNewEventButt">
-          <button className="addNewButt" onClick={() => {
+          <button className="addNewButt" onClick={async () => {
+            const newEvent = {
+              id: selected.events.length,
+              year: selected.year,
+              month: selected.month,
+              day: selected.day,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              time: {
+                hour: (new Date()).getHours(),
+                minute: (new Date()).getMinutes(),
+              },
+              title: "Title",
+              description: "",
+            };
+            await axios.post([mainRoute, 'events'].join('/'), 
+              {
+                event: { ...newEvent },
+            },{ withCredentials: true });
             setSelected({
               ...selected,
               events: [
                 ...selected.events,
-                {
-                  id: selected.events.length,
-                  year: selected.year,
-                  month: selected.month,
-                  day: selected.day,
-                  color: colors[Math.floor(Math.random()*colors.length)],
-                  time: {
-                    hour: (new Date()).getHours(),
-                    minute: (new Date()).getMinutes(),
-                  },
-                  title: "Title",
-                  description: "",
-                },
+                newEvent,
               ],
             });
           }}>+</button>
