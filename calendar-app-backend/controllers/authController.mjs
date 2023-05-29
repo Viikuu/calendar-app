@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
 import { UserModel } from '../db/models/Users.mjs';
-import fastify from '../server.mjs';
 
-export async function createUser(request, reply) {
+export async function createUser(request, reply, fastify) {
   try {
     const { email, password } = request.body;
 
@@ -12,8 +11,12 @@ export async function createUser(request, reply) {
       email,
     });
     return await newUser.save();
-  } catch {
-    throw new Error('Something went wrong! Try again');
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      throw fastify.httpErrors.badRequest('This email is already in use!');
+    } else {
+      throw new Error('Something went wrong! Try again');
+    }
   }
 }
 
@@ -25,7 +28,6 @@ export async function authUser(request, reply) {
     }).exec();
     return payload;
   } catch (error) {
-    console.log(error);
     throw new Error(`Something went wrong! Try again`);
   }
 }

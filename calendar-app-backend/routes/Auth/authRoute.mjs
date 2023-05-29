@@ -2,16 +2,19 @@ import {
   createUser,
   authUser,
   getUser,
-  logout,
 } from '../../controllers/authController.mjs';
+import bcrypt from 'bcrypt';
 
 import { createUserOpts, authUserOpts, getUserOpts } from './authOpts.mjs';
 
 export const authRouter = async (fastify, opts, done) => {
   await fastify.post('/', createUserOpts, async function cU(request, reply) {
-    const newUser = await createUser(request, reply);
+    const newUser = await createUser(request, reply, fastify);
     return {
-      user: newUser,
+      user: {
+        _id: newUser._id,
+        email: newUser.email,
+      },
     };
   }); //register
 
@@ -62,7 +65,10 @@ export const authRouter = async (fastify, opts, done) => {
       if (request.user) {
         const { password, ...userData } = getUser(request, reply);
         return {
-          user: userData,
+          user: {
+            _id: userData._id,
+            email: userData.email,
+          },
         };
       } else {
         throw fastify.httpErrors.unauthorized();
