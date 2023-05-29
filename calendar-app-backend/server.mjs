@@ -14,7 +14,8 @@ const fastify = Fastify({ logger: true });
 fastify.register(fastifySensible);
 
 await fastify.register(cors, {
-  // put your options here
+  origin: true,
+  credentials: true,
 });
 
 await fastify.register(fastifyEnv, {
