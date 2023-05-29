@@ -1,5 +1,4 @@
 import { EventModel } from '../db/models/Events.mjs';
-const { errorCodes } = 'fastify';
 
 export async function getEvents(request, reply) {
   try {
@@ -7,7 +6,7 @@ export async function getEvents(request, reply) {
       userId: request.user._id,
     }).exec();
 
-    return { events: eventData };
+    return eventData;
   } catch {
     throw new Error('Something went wrong! Try again');
   }
@@ -20,9 +19,7 @@ export async function createEvent(request, reply) {
       userId: request.user._id,
       ...event,
     });
-    return {
-      event: await newEvent.save(),
-    };
+    return await newEvent.save();
   } catch {
     throw new Error('Something went wrong! Try again');
   }
@@ -42,12 +39,7 @@ export async function updateEvent(request, reply) {
         new: true,
       },
     ).exec();
-
-    if (!existingEvent) {
-      reply.code(errorCodes.FST_ERR_NOT_FOUND);
-      return {};
-    }
-    return { event: existingEvent };
+    return existingEvent;
   } catch {
     throw new Error('Something went wrong! Try again');
   }
@@ -61,11 +53,7 @@ export async function deleteEvent(request, reply) {
       userId: request.user._id,
     }).exec();
 
-    if (!deletedEvent) {
-      reply.code(errorCodes.FST_ERR_NOT_FOUND);
-      return {};
-    }
-    return { event: deletedEvent };
+    return deletedEvent;
   } catch {
     throw new Error('Something went wrong! Try again');
   }

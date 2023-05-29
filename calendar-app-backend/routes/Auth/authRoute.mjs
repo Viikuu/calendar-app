@@ -8,16 +8,84 @@ import {
 import { createUserOpts, authUserOpts, getUserOpts } from './authOpts.mjs';
 
 export const authRouter = async (fastify, opts, done) => {
-  await fastify.post('/', createUserOpts, createUser); //register
+  await fastify.post('/', createUserOpts, async function cU(request, reply) {
+    const newUser = await createUser(request, reply);
+    return {
+      user: newUser,
+    };
+  }); //register
 
-  await fastify.post('/login', authUserOpts, authUser); //login
+  await fastify.post('/login', authUserOpts, async function aU(request, reply) {
+    const { password } = request.body;
+    const payload = await authUser(request, reply);
+
+    if (!payload) {
+      fastify.httpErrors.unauthorized();
+    }
+
+    const { _doc: existingUser } = payload;
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+    if (!isPasswordValid) {
+      throw fastify.httpErrors.unauthorized();
+    }
+
+    const token = await reply.jwtSign({
+      _id: existingUser._id,
+      email: existingUser.email,
+    });
+
+    reply
+      .setCookie('token', token, {
+        domain: 'localhost',
+        path: '/',
+        secure: false, // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+      })
+      .code(200);
+    return {
+      user: {
+        _id: existingUser._id,
+        email: existingUser.email,
+      },
+    };
+  }); //login
 
   fastify.register(async (fastify, opts, done) => {
     fastify.addHook('onRequest', fastify.auth([fastify.authenticate]));
 
-    await fastify.get('/', getUserOpts, getUser); // check
+    await fastify.get('/', getUserOpts, async function gU(request, reply) {
+      if (request.user) {
+        const { password, ...userData } = getUser(request, reply);
+        return {
+          user: userData,
+        };
+      } else {
+        throw fastify.httpErrors.unauthorized();
+      }
+    }); // check
 
-    await fastify.post('/logout', authUserOpts, logout);
+    await fastify.post(
+      '/logout',
+      authUserOpts,
+      async function logout(request, reply) {
+        if (request.user)
+          reply.setCookie('token', '', {
+            domain: 'localhost',
+            path: '/',
+            secure: false, // send cookie over HTTPS only
+            httpOnly: true,
+            sameSite: true, // alternative CSRF protection
+          });
+        else {
+          throw fastify.httpErrors.methodNotAllowed('User already logged out!');
+        }
+      },
+    );
 
     done();
   });
