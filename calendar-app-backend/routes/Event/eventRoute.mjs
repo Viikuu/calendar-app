@@ -16,12 +16,12 @@ export const eventRouter = async (fastify, opts, done) => {
   fastify.addHook('onRequest', fastify.auth([fastify.authenticate]));
 
   await fastify.get('/', getEventsOpts, async function gE(request, reply) {
-    const eventData = getEvents(request, reply);
+    const eventData = await getEvents(request, reply);
     return { events: eventData };
   });
 
   await fastify.post('/', createEventsOpts, async function cE(request, reply) {
-    const newEvent = createEvent(request, reply);
+    const newEvent = await createEvent(request, reply);
     return {
       event: newEvent,
     };
@@ -31,7 +31,7 @@ export const eventRouter = async (fastify, opts, done) => {
     '/:id',
     updateEventsOpts,
     async function uE(request, reply) {
-      const existingEvent = updateEvent(request, reply);
+      const existingEvent = await updateEvent(request, reply);
 
       if (!existingEvent) {
         fastify.httpErrors.notFound('Event with given id not found!');
@@ -44,7 +44,7 @@ export const eventRouter = async (fastify, opts, done) => {
     '/:id',
     deleteEventsOpts,
     async function dE(request, reply) {
-      const deletedEvent = deleteEvent(request, reply);
+      const deletedEvent = await deleteEvent(request, reply);
 
       if (!deletedEvent) {
         fastify.httpErrors.notFound('Event with given id not found!');

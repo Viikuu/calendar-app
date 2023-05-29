@@ -34,7 +34,7 @@ export async function updateEvent(request, reply) {
         _id: id,
         userId: request.user._id,
       },
-      event,
+      ...event,
       {
         new: true,
       },

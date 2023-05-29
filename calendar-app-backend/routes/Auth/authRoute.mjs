@@ -42,11 +42,11 @@ export const authRouter = async (fastify, opts, done) => {
 
     reply
       .setCookie('token', token, {
-        domain: 'localhost',
         path: '/',
+        signed: false,
         secure: false, // send cookie over HTTPS only
         httpOnly: true,
-        sameSite: true, // alternative CSRF protection
+        sameSite: 'strict', // alternative CSRF protection
       })
       .code(200);
     return {
