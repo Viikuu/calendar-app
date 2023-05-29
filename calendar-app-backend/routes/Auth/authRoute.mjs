@@ -21,9 +21,8 @@ export const authRouter = async (fastify, opts, done) => {
   await fastify.post('/login', authUserOpts, async function aU(request, reply) {
     const { password } = request.body;
     const payload = await authUser(request, reply);
-
     if (!payload) {
-      fastify.httpErrors.unauthorized();
+      throw fastify.httpErrors.unauthorized();
     }
 
     const { _doc: existingUser } = payload;
@@ -63,7 +62,11 @@ export const authRouter = async (fastify, opts, done) => {
 
     await fastify.get('/', getUserOpts, async function gU(request, reply) {
       if (request.user) {
-        const { password, ...userData } = getUser(request, reply);
+        const { password, ...userData } = await getUser(request, reply);
+        console.log({
+          _id: userData._id,
+          email: userData.email,
+        });
         return {
           user: {
             _id: userData._id,
