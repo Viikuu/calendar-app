@@ -4,6 +4,7 @@ import fastifyJwt from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
 import fastifyAuth from '@fastify/auth';
 import fastifySensible from '@fastify/sensible';
+import cors from '@fastify/cors';
 import { eventRouter } from './routes/Event/eventRoute.mjs';
 import { mongooseConn } from './db/index.mjs';
 import { authRouter } from './routes/Auth/authRoute.mjs';
@@ -11,6 +12,10 @@ import { authRouter } from './routes/Auth/authRoute.mjs';
 const fastify = Fastify({ logger: true });
 
 fastify.register(fastifySensible);
+
+await fastify.register(cors, {
+  // put your options here
+});
 
 await fastify.register(fastifyEnv, {
   dotenv: true,
