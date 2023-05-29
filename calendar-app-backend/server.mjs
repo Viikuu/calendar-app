@@ -40,6 +40,8 @@ fastify.register(mongooseConn, {
 
 fastify.register(fastifyAuth);
 
+fastify.register(fastifyCookie);
+
 fastify.register(fastifyJwt, {
   secret: fastify.config.SECRET,
   cookie: {
@@ -55,8 +57,6 @@ fastify.decorate('authenticate', async function (request, reply) {
     reply.send(err);
   }
 });
-
-fastify.register(fastifyCookie);
 
 fastify.register(async (fastify, opts, done) => {
   await fastify.register(authRouter, { prefix: 'auth' });
