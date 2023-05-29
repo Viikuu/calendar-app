@@ -15,6 +15,7 @@
     "@fastify/cookie": "^8.3.0",
     "@fastify/env": "^4.2.0",
     "@fastify/jwt": "^7.0.0",
+    "@fastify/sensible": "^5.2.0",
     "bcrypt": "^5.1.0",
     "fastify": "^4.17.0",
     "mongoose": "^7.2.1",
