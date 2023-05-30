@@ -1,5 +1,5 @@
 export interface DayEventI {
-  id: any,
+  _id: string,
   color: string,
   day: number;
   month: number;

@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { DataPicker } from '../../components/DataPicker'
 import { userData } from '../../utils/types';
 import './Main.css'
 import { mainRoute } from '../../utils/roots';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DataPicker } from '../../components/DataPIcker';
 
 export function Main() {
   const navigate = useNavigate();
