@@ -107,17 +107,17 @@
   box-shadow: 0px 0px 3px #CBD4C2;
   display: flex;
   flex-direction: column;
-  border: 2px solid #FFFFFF;
+  border:1.5px solid #FFFFFF;
   border-radius: 20px;
 }
 
 .selected {
-  border: 4px solid #Daad86;
+  border: 2px solid #Daad86;
   font-weight: bold;
 }
 
 .noActive {
-  border: 2px solid #6464647c;
+  border: 1.5px solid #6464647c;
   color: #6464647c;
 }
 

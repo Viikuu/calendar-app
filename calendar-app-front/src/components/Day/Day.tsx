@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CalendarDate, Weekday, Month } from '../../utils/types';
+import { CalendarDate, parseDate } from '../../utils/types';
 import './Day.css';
-import { Months, Weekdays } from "../../configs/Weekdays";
+import { Months} from "../../configs/Weekdays";
 import { DayEvent, DayEventI } from '../DayEvent/DayEvent';
 import axios from "axios";
 import { mainRoute } from "../../utils/roots";
@@ -30,7 +30,6 @@ const colors = [
 export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
   const onTitleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    
     const title = event.target.value;
     await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { title },
@@ -50,17 +49,18 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
       });
   }
 
-  const onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onDescriptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const description = event.target.value;
-    setSelected({
-      ...selected,
-      events: [
-        ...selected.events.map(async(el) => {
-          if (el._id == event.target.id) {
-            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+    await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { description },
               }, { withCredentials: true
             })
+    setSelected({
+      ...selected,
+      events: [
+        ...selected.events.map((el) => {
+          if (el._id == event.target.id) {
+            
             return { ...el, description }
           }
           return el;
@@ -81,44 +81,60 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
       });
   }
 
-  const onMinuteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onMinuteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const minute = Number(event.target.value);
+    let date = new Date();
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map(async(el) => {
+        ...selected.events.map((el) => {
           if (el._id == event.target.id) {
-            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
-                event: {...el, time: { ...el.time, minute } },
-              },{ withCredentials: true }
-            )
-            return { ...el, time: { ...el.time, minute } }
+            date = new Date(
+              el.date.getFullYear(),
+              el.date.getMonth(),
+              el.date.getDate(),
+              el.date.getHours(),
+              minute,
+            );
+            return { ...el, date }
           }
           return el;
         }),
         ],
-      });
+    });
+    await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+      event: { date },
+    }, { withCredentials: true }
+    );
+
   }
 
   const onHourChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const hour = Number(event.target.value);
-    
+    let date = new Date();
     setSelected({
       ...selected,
       events: [
-        ...selected.events.map(async (el) => {
+        ...selected.events.map((el) => {
           if (el._id == event.target.id) {
-            await axios.put([mainRoute, 'events', event.target.id].join('/'), 
-              {
-                event: {...el, time: { ...el.time, hour: hour } },
-              }, { withCredentials: true }
-            )
-            return { ...el, time: { ...el.time, hour } }
+            date = new Date(
+              el.date.getFullYear(),
+              el.date.getMonth(),
+              el.date.getDate(),
+              hour,
+              el.date.getMinutes(),
+            );
+            return { ...el, date }
           }
-          return el
+          return el;
         }),
         ],
-      });
+    });
+    await axios.put([mainRoute, 'events', event.target.id].join('/'), 
+              {
+                event: { date },
+              }, { withCredentials: true }
+            )
   }
 
   return <div className="dayComponent">
@@ -142,27 +158,29 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
         <div className="addNewEventButt">
           <button className="addNewButt" onClick={async () => {
             const newEvent = {
-              year: selected.year,
-              month: selected.month,
-              day: selected.day,
+              date: (
+                new Date(selected.year,
+                  selected.month,
+                  selected.day,
+                  (new Date()).getHours(),
+                  (new Date()).getMinutes(),
+              )),
               color: colors[Math.floor(Math.random() * colors.length)],
-              time: {
-                hour: (new Date()).getHours(),
-                minute: (new Date()).getMinutes(),
-              },
               title: "Title",
               description: "",
             };
+            
             const {data: {event:createdEvent}} = await axios.post([mainRoute, 'events'].join('/'), 
               {
                 event: { ...newEvent },
               }, { withCredentials: true });
+            const [parsedEvent] = parseDate([createdEvent]);
             
             setSelected({
               ...selected,
               events: [
                 ...selected.events,
-                createdEvent,
+                parsedEvent,
               ],
             });
           }}>+</button>

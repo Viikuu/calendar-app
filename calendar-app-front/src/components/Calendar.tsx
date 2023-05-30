@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CalendarDate, DayEventI, Weekday } from '../utils/types';
+import { CalendarDate, DayEventI, Weekday, parseDate } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
 import { Day } from "./Day/Day";
 import { Dot } from "./Dot/Dot";
@@ -55,7 +55,7 @@ export const Calendar: React.FC = () => {
           month: m,
           year: y,
           weekday: (new Date(y, m, d)).toLocaleDateString('en', { weekday: 'long' }) as Weekday,
-          events: [...events.filter(event => event.day === d && event.month === m && event.year === y)],
+          events: [...events.filter(event => event.date.getDate() === d && event.date.getMonth() === m && event.date.getFullYear() === y)],
           active: false,
         });
       } else {
@@ -64,7 +64,7 @@ export const Calendar: React.FC = () => {
           month: thisMonth,
           year: thisYear,
           weekday: (new Date(thisYear, thisMonth, i - paddingDays + 1)).toLocaleDateString('en', { weekday: 'long' }) as Weekday,
-          events: [...events.filter(event => event.day === i - paddingDays + 1 && event.month === thisMonth && event.year === thisYear)],
+          events: [...events.filter(event => event.date.getDate() === i - paddingDays + 1 && event.date.getMonth() === thisMonth && event.date.getFullYear() === thisYear)],
           active: true,
         });
       }
@@ -81,8 +81,9 @@ export const Calendar: React.FC = () => {
 
   async function getEvents() {
       try {
-        const { data } = await axios.get<getEvents>([mainRoute, 'events'].join('/'), { withCredentials: true });
-        setEvents(data.events);
+        const { data: {events} } = await axios.get<getEvents>([mainRoute, 'events'].join('/'), { withCredentials: true });
+        const fetchedEvents = parseDate(events);
+        setEvents(fetchedEvents);
       } catch (error) {
         console.log(error);
       }
@@ -93,6 +94,8 @@ export const Calendar: React.FC = () => {
     setYear(dt.getFullYear());
     setMonth(dt.getMonth());
     getEvents();
+    console.log(123);
+    
   }, []);
 
   useEffect(() => {
@@ -109,12 +112,10 @@ export const Calendar: React.FC = () => {
 
   const decreaseMonth = () => {
     setMonth(() => month - 1);
-    getEvents()
   }
 
   const increaseMonth = () => {
     setMonth(() => month + 1);
-    getEvents()
   }
   return (
     <div className="calendar-container">
