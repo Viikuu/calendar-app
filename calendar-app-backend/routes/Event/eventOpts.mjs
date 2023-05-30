@@ -1,4 +1,5 @@
 const eventSchema = {
+  _id: { type: 'string' },
   color: { type: 'string' },
   day: { type: 'number' },
   month: { type: 'number' },

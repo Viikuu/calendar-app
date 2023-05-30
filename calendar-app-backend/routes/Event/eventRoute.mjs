@@ -12,18 +12,39 @@ import {
   updateEventsOpts,
 } from './eventOpts.mjs';
 
+function parseEvent(events) {
+  return events.map((el) => {
+    return {
+      title: el.title,
+      description: el.description,
+      color: el.color,
+      _id: el._id.toString(),
+      day: el.date.getDate(),
+      month: el.date.getMonth(),
+      year: el.date.getFullYear(),
+      time: {
+        hour: el.date.getHours(),
+        minute: el.date.getMinutes(),
+      },
+    };
+  });
+}
+
 export const eventRouter = async (fastify, opts, done) => {
   fastify.addHook('onRequest', fastify.auth([fastify.authenticate]));
 
   await fastify.get('/', getEventsOpts, async function gE(request, reply) {
     const eventData = await getEvents(request, reply);
-    return { events: eventData };
+    const events = parseEvent(eventData);
+    console.log(events);
+    return { events: events };
   });
 
   await fastify.post('/', createEventsOpts, async function cE(request, reply) {
     const newEvent = await createEvent(request, reply);
+    const [event] = parseEvent([newEvent]);
     return {
-      event: newEvent,
+      event: event,
     };
   });
 
@@ -36,7 +57,8 @@ export const eventRouter = async (fastify, opts, done) => {
       if (!existingEvent) {
         fastify.httpErrors.notFound('Event with given id not found!');
       }
-      return { event: existingEvent };
+      const [event] = parseEvent([existingEvent]);
+      return { event: event };
     },
   );
 
@@ -49,7 +71,8 @@ export const eventRouter = async (fastify, opts, done) => {
       if (!deletedEvent) {
         fastify.httpErrors.notFound('Event with given id not found!');
       }
-      return { event: deletedEvent };
+      const [event] = parseEvent([deletedEvent]);
+      return { event: event };
     },
   );
 
