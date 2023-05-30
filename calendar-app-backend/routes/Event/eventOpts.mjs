@@ -1,15 +1,9 @@
 const eventSchema = {
   _id: { type: 'string' },
   color: { type: 'string' },
-  day: { type: 'number' },
-  month: { type: 'number' },
-  year: { type: 'number' },
-  time: {
-    type: 'object',
-    properties: {
-      hour: { type: 'number' },
-      minute: { type: 'number' },
-    },
+  date: {
+    type: 'string',
+    format: 'date-time',
   },
   title: { type: 'string' },
   description: { type: 'string' },
