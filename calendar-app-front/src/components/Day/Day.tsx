@@ -29,17 +29,19 @@ const colors = [
 
 export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
-  const onTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTitleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    
     const title = event.target.value;
-    setSelected({
-      ...selected,
-      events: [
-        ...selected.events.map(async(el) => {
-          if (el.id == event.target.id) {
-            await axios.put([mainRoute, 'events', event.target.id].join('/'), {
+    await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { title },
               }, { withCredentials: true,
             })
+    setSelected({
+      ...selected,
+      events: [
+        ...selected.events.map((el) => {
+          if (el._id == event.target.id) {
+            
             return { ...el, title }
           }
           return el;
@@ -54,7 +56,7 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
       ...selected,
       events: [
         ...selected.events.map(async(el) => {
-          if (el.id == event.target.id) {
+          if (el._id == event.target.id) {
             await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { description },
               }, { withCredentials: true
@@ -74,20 +76,20 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
     setSelected({
       ...selected,
       events: [
-        ...selected.events.filter((el) => el.id !== id),
+        ...selected.events.filter((el) => el._id !== id),
         ],
       });
   }
 
   const onMinuteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const minute = event.target.value;
+    const minute = Number(event.target.value);
     setSelected({
       ...selected,
       events: [
         ...selected.events.map(async(el) => {
-          if (el.id == event.target.id) {
+          if (el._id == event.target.id) {
             await axios.put([mainRoute, 'events', event.target.id].join('/'), {
-                event: { time: { ...el.time, minute } },
+                event: {...el, time: { ...el.time, minute } },
               },{ withCredentials: true }
             )
             return { ...el, time: { ...el.time, minute } }
@@ -99,16 +101,16 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
   }
 
   const onHourChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const hour = event.target.value;
+    const hour = Number(event.target.value);
     
     setSelected({
       ...selected,
       events: [
         ...selected.events.map(async (el) => {
-          if (el.id == event.target.id) {
+          if (el._id == event.target.id) {
             await axios.put([mainRoute, 'events', event.target.id].join('/'), 
               {
-                event: { time: { ...el.time, hour } },
+                event: {...el, time: { ...el.time, hour: hour } },
               }, { withCredentials: true }
             )
             return { ...el, time: { ...el.time, hour } }
@@ -140,7 +142,6 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
         <div className="addNewEventButt">
           <button className="addNewButt" onClick={async () => {
             const newEvent = {
-              id: selected.events.length,
               year: selected.year,
               month: selected.month,
               day: selected.day,
@@ -152,15 +153,16 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
               title: "Title",
               description: "",
             };
-            await axios.post([mainRoute, 'events'].join('/'), 
+            const {data: {event:createdEvent}} = await axios.post([mainRoute, 'events'].join('/'), 
               {
                 event: { ...newEvent },
-            },{ withCredentials: true });
+              }, { withCredentials: true });
+            
             setSelected({
               ...selected,
               events: [
                 ...selected.events,
-                newEvent,
+                createdEvent,
               ],
             });
           }}>+</button>
