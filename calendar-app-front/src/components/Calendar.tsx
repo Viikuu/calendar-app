@@ -94,8 +94,6 @@ export const Calendar: React.FC = () => {
     setYear(dt.getFullYear());
     setMonth(dt.getMonth());
     getEvents();
-    console.log(123);
-    
   }, []);
 
   useEffect(() => {
@@ -106,6 +104,7 @@ export const Calendar: React.FC = () => {
   useEffect(() => {
     if (selected !== null && prevSelectedRef.current !== null) {
       setCalendarDays(calendarDays.map(el => el.day === selected.day && el.month === selected.month && el.year == selected.year ? selected : el));
+      getEvents();
     }
     prevSelectedRef.current = selected;
   },[selected]);
@@ -122,7 +121,7 @@ export const Calendar: React.FC = () => {
       <div className="datepicker-container">
 
         <div className="month-nav-container">
-          <div className="month-nav-info"> {year}, {Months[month]} </div>
+          <div className="month-nav-info"> {year}. {Months[month]} </div>
           <div>
             <button onClick={decreaseMonth}> {' < '}</button>
             <button onClick={increaseMonth}> {' > '} </button>
@@ -137,7 +136,7 @@ export const Calendar: React.FC = () => {
         <div className="calendar">
           {calendarDays.length !== 0 && calendarDays.map((date, index) => (
             <div key={index}
-              className={`calendarDays ${!date.active ? 'noActive': ''} ${selected === date ? 'selected': ''} ${isToday(date) ? 'isToday': ''}`}
+              className={`calendarDays ${!date.active ? 'noActive': ''} ${selected?.day === date.day && selected?.month === date.month && selected?.year === date.year ? 'selected': ''} ${isToday(date) ? 'isToday': ''}`}
               onClick={
                 (e) => {
                   const thisCalendarDate = calendarDays[index];
