@@ -12,18 +12,17 @@ type DayEventProps = {
 }
 
 export const DayEvent: React.FC<DayEventProps> = ({ dayEventProp, onTitleChange, onDescriptionChange, onEventDelete, onHourChange, onMinuteChange } ) => {
-  console.log(dayEventProp)
   return (
     <div className="dayEvent" style={{ backgroundColor: dayEventProp.color }}>
       <div className="dayEventContainer">
         <div className="time">
-          <select value={dayEventProp.time.hour } onChange={onHourChange} id={dayEventProp._id}  name="hour">
+          <select value={dayEventProp.date.getHours() } onChange={onHourChange} id={dayEventProp._id}  name="hour">
             {[...Array(24).keys()].map((hour,index) => (
               <option key={index} value={hour}>{hour < 10 ? "0"+hour : hour}</option>
             ))}
           </select>
           :
-          <select value={dayEventProp.time.minute} onChange={onMinuteChange} id={dayEventProp._id}  name="minute">
+          <select value={dayEventProp.date.getMinutes()} onChange={onMinuteChange} id={dayEventProp._id}  name="minute">
             {[...Array(60).keys()].map((minute,index) => (
               <option key={index} value={minute}>{minute < 10 ? "0" + minute : minute}</option>
             ))}
