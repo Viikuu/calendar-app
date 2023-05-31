@@ -1,11 +1,9 @@
-FROM node:alpine
+FROM node
 
 WORKDIR /app
 
-COPY package.json .
+COPY . .
 
-RUN npm i
-
-VOLUME [ "/app" ]
+RUN npm install
 
 CMD ["npm", "run", "dev"]

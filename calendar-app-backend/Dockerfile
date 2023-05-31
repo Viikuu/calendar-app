@@ -1,11 +1,11 @@
 FROM node:alpine
 
-WORKDIR /data
+WORKDIR /api
 
 COPY package.json .
 
-RUN npm i
+RUN npm install
 
-VOLUME [ "/data" ]
+COPY . .
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start"]

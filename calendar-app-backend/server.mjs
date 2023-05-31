@@ -14,7 +14,7 @@ const fastify = Fastify({ logger: true });
 fastify.register(fastifySensible);
 
 await fastify.register(cors, {
-  origin: true,
+  origin: async () => true,
   credentials: true,
 });
 
@@ -81,7 +81,10 @@ fastify.register(async (fastify, opts, done) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: fastify.config.PORT });
+    await fastify.listen({
+      port: fastify.config.PORT,
+      host: '0.0.0.0',
+    });
   } catch (err) {
     console.error(err);
     process.exit(1);
