@@ -6,9 +6,8 @@
 }
 
 .calendar-container {
-  margin: auto;
   position: relative;
-  padding-top: 100px;
+  padding-top: 2rem;
   justify-content: center;
   display: flex;
 }
@@ -16,8 +15,8 @@
 .datepicker-container {
   background-color: #bc986a1c;
   border-radius: 2%;
-  width: 50%;
-  margin: 3em;
+  width: 55%;
+  margin: 2em;
   margin-top: 0;
   padding: 3em;
   height: 70%;
@@ -29,11 +28,12 @@
   grid-template-columns: repeat(7, 1fr);
   grid-column-gap: 0px;
   grid-row-gap: 0px;
+  font-size: small;
   margin: auto;
   justify-content: space-around;
-  border: 2px solid #FFFFFF;
+  border: 1px solid #FFFFFF;
   border-radius: 20px;
-  padding: 5px;
+  padding: 3px;
 }
 
 .weekdays-container .week-day {
@@ -44,7 +44,7 @@
   display: flex;
   justify-content: space-between;
   margin: auto;
-  padding: 5px;
+  padding: 3px;
 }
 
 .month-nav-info {
@@ -85,11 +85,12 @@
 
 .calendar {
   width: 100%;
-  padding: 15px;
+  padding: 10px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-column-gap: 0px;
   grid-row-gap: 0px;
+  font-size: small;
 }
 
 
@@ -99,11 +100,11 @@
 
 .calendarDays {
   padding: 12px;
-  height: 100px;
+  height: 90px;
   margin: auto;
   cursor: pointer;
   box-sizing: border-box;
-  margin: 5px;
+  margin: 0.2rem 0.5rem ;
   box-shadow: 0px 0px 3px #CBD4C2;
   display: flex;
   flex-direction: column;
