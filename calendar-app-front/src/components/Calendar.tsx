@@ -47,7 +47,7 @@ export const Calendar: React.FC = () => {
 
     for (let i = 0; i < daysInMonth + paddingDays; i++) {
       if (i < paddingDays) {
-        const d = daysInPrevMonth - paddingDays + i
+        const d = daysInPrevMonth - paddingDays + i + 1;
         const m = thisMonth - 1 === -1 ? 11 : thisMonth - 1;
         const y = thisMonth - 1 === -1 ? thisYear - 1 : thisYear
         calDays.push({
@@ -140,7 +140,7 @@ export const Calendar: React.FC = () => {
               onClick={
                 (e) => {
                   const thisCalendarDate = calendarDays[index];
-                  if (thisCalendarDate === selected) {
+                  if (selected?.day === thisCalendarDate.day && selected?.month === thisCalendarDate.month && selected?.year === thisCalendarDate.year) {
                     setSelected(null);
                   } else {
                     setSelected(thisCalendarDate);
