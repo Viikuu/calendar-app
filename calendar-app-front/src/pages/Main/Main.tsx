@@ -4,10 +4,11 @@ import './Main.css'
 import { mainRoute } from '../../utils/roots';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DataPicker } from '../../components/DataPIcker';
+import { DataPicker } from '../../components/DataPicker';
+import { Logout } from '../../components/Logout/Logout';
 
 export function Main() {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
   useEffect(() => {
 		async function chechAuth():Promise<boolean> {
 			try {
@@ -21,7 +22,8 @@ export function Main() {
 		
   }, []);
 
-  return <>
+	return <>
+		<Logout />
     <DataPicker />
   </>
 

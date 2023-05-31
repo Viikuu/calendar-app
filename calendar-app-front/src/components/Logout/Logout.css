@@ -1,0 +1,19 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  background: #1a1a1d;
+}
+
+.logoutButt {
+  background-color: #659dbd;
+  color: white;
+  padding: 0.5rem;
+  margin:1rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+
+}
