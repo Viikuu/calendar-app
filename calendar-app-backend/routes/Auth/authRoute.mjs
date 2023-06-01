@@ -74,24 +74,20 @@ export const authRouter = async (fastify, opts, done) => {
       }
     }); // check
 
-    await fastify.post(
-      '/logout',
-      authUserOpts,
-      async function logout(request, reply) {
-        if (request.user) {
-          reply.setCookie('token', '', {
-            path: '/',
-            signed: false,
-            secure: false, // send cookie over HTTPS only
-            httpOnly: true,
-            sameSite: 'strict', // alternative CSRF protection
-          });
-          return {};
-        } else {
-          throw fastify.httpErrors.methodNotAllowed('User already logged out!');
-        }
-      },
-    );
+    await fastify.post('/logout', async function logout(request, reply) {
+      if (request.user) {
+        reply.setCookie('token', '', {
+          path: '/',
+          signed: false,
+          secure: false, // send cookie over HTTPS only
+          httpOnly: true,
+          sameSite: 'strict', // alternative CSRF protection
+        });
+        return {};
+      } else {
+        throw fastify.httpErrors.methodNotAllowed('User already logged out!');
+      }
+    });
 
     done();
   });
