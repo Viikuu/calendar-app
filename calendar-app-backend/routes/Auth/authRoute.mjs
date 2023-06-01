@@ -63,10 +63,6 @@ export const authRouter = async (fastify, opts, done) => {
     await fastify.get('/', getUserOpts, async function gU(request, reply) {
       if (request.user) {
         const { password, ...userData } = await getUser(request, reply);
-        console.log({
-          _id: userData._id,
-          email: userData.email,
-        });
         return {
           user: {
             _id: userData._id,

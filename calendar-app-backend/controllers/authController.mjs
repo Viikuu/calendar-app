@@ -22,7 +22,7 @@ export async function createUser(request, reply, fastify) {
 
 export async function authUser(request, reply) {
   try {
-    const { email, password } = request.body;
+    const { email } = request.body;
     const payload = await UserModel.findOne({
       email,
     }).exec();
