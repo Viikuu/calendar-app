@@ -22,7 +22,7 @@ await fastify.register(fastifyEnv, {
   dotenv: true,
   schema: {
     type: 'object',
-    required: ['PORT', 'SECRET'],
+    required: ['PORT', 'SECRET', 'DATABASE_HOST'],
     properties: {
       DATABASE_HOST: {
         type: 'string',

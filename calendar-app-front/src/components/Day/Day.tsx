@@ -139,7 +139,7 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
   return <div className="dayComponent">
     <div className= "dayHeader">
-      <h2 className="dayInfo"> {selected.year},{selected.day},{Months[selected.month]}</h2>  
+      <h2 className="dayInfo"> {selected.year}.{selected.day}.{Months[selected.month]}</h2>  
       <button className="xButton" onClick={(event)=>{setSelected(null)}}>-</button>
     </div>
     <div className="scroll">
