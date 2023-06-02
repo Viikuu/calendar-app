@@ -4,7 +4,7 @@ This is a Calendar application built with Node.js, Fastify, React with TypeScrip
 
 The Calendar App provides users with a smooth UI created in React.ts with vite bundler. Api is created in fastify.js using MongoDB and everything is wrapped in Dockerfiles and docker-compose.yaml for fast enviroment creation.
 
-This app is live on [cloud hosting](http://167.99.138.190/)
+This app is live on [cloud hosting](http://67.207.75.222/)
 
 ## Technologies
 
