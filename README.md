@@ -53,4 +53,4 @@ calendar-app
 - The `calendar-app-backend` directory contains the server-side Fastify application.
 - The `docker-compose.yml` file defines the Docker Compose configuration for running the application.
 
-Thank you for checking out the Calendar App! If you have any questions or need further assistance, please don't hesitate to reach out. Happy coding!
+Thank you for checking out the Calendar App!
