@@ -12,17 +12,6 @@ import {
   updateEventsOpts,
 } from './eventOpts.mjs';
 
-function parseEvent(events) {
-  return events.map((el) => {
-    return {
-      title: el.title,
-      description: el.description,
-      color: el.color,
-      _id: el._id.toString(),
-    };
-  });
-}
-
 export const eventRouter = async (fastify, opts, done) => {
   fastify.addHook('onRequest', fastify.auth([fastify.authenticate]));
 
