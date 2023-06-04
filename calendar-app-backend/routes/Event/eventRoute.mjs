@@ -2,12 +2,14 @@ import {
   createEvent,
   deleteEvent,
   getEvents,
+  getEventsByType,
   updateEvent,
 } from '../../controllers/eventController.mjs';
 
 import {
   createEventsOpts,
   deleteEventsOpts,
+  getEventsByTypeOpts,
   getEventsOpts,
   updateEventsOpts,
 } from './eventOpts.mjs';
@@ -19,6 +21,15 @@ export const eventRouter = async (fastify, opts, done) => {
     const eventsData = await getEvents(request, reply);
     return { events: eventsData };
   });
+
+  await fastify.get(
+    '/:type',
+    getEventsByTypeOpts,
+    async function gEbT(request, reply) {
+      const eventsData = await getEventsByType(request, reply);
+      return { events: eventsData };
+    },
+  );
 
   await fastify.post('/', createEventsOpts, async function cE(request, reply) {
     const newEvent = await createEvent(request, reply);

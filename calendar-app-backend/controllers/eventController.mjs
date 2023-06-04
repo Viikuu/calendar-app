@@ -12,6 +12,19 @@ export async function getEvents(request, reply) {
   }
 }
 
+export async function getEventsByType(request, reply) {
+  try {
+    const eventData = await EventModel.find({
+      userId: request.user._id,
+      type: request.params.type,
+    }).exec();
+
+    return eventData;
+  } catch {
+    throw new Error('Something went wrong! Try again');
+  }
+}
+
 export async function createEvent(request, reply) {
   try {
     const { event } = request.body;

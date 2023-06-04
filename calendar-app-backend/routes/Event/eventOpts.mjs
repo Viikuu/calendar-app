@@ -7,10 +7,37 @@ const eventSchema = {
   },
   title: { type: 'string' },
   description: { type: 'string' },
+  type: { type: 'string' },
 };
 
 export const getEventsOpts = {
   schema: {
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          events: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: eventSchema,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const getEventsByTypeOpts = {
+  schema: {
+    params: {
+      type: 'object',
+      required: ['type'],
+      properties: {
+        type: { type: 'string' },
+      },
+    },
     response: {
       200: {
         type: 'object',

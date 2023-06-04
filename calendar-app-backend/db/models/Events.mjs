@@ -20,6 +20,9 @@ const eventSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
+  type: {
+    type: String,
+  },
 });
 
 export const EventModel = mongoose.model('Event', eventSchema);
