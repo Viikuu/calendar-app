@@ -9,6 +9,9 @@ export async function createUser(request, reply, fastify) {
     const newUser = new UserModel({
       password: hashedPass,
       email,
+      city: '',
+      country: '',
+      options: {},
     });
     return await newUser.save();
   } catch (error) {

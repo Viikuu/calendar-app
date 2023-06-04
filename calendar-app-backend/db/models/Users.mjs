@@ -13,6 +13,17 @@ const userSchema = new Schema({
     required: true,
     min: 8,
   },
+  options: {
+    type: Object,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
 });
 
 userSchema.plugin(uniqueValidator);
