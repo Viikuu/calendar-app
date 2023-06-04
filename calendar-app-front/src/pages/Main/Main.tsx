@@ -5,7 +5,7 @@ import { mainRoute } from '../../utils/roots';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataPicker } from '../../components/DataPicker';
-import { Logout } from '../../components/Logout/Logout';
+import { Navbar } from '../../components/Navbar/Navbar';
 
 export function Main() {
 	const navigate = useNavigate();
@@ -23,7 +23,7 @@ export function Main() {
   }, []);
 
 	return <>
-		<Logout />
+		<Navbar />
     <DataPicker />
   </>
 

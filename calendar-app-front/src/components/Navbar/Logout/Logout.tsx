@@ -1,6 +1,6 @@
 import React from 'react';
 import './Logout.css';
-import { mainRoute } from '../../utils/roots';
+import { mainRoute } from '../../../utils/roots';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,10 +11,6 @@ export const Logout: React.FC = () => {
     navigate('/login')
   }
   return (
-    <div className='navbar'>
-      <div></div>
-      <div></div>
       <button onClick={logoutOnClick} className='logoutButt'>Logout</button>
-    </div>
   )
 }
