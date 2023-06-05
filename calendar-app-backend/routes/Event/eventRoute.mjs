@@ -4,6 +4,7 @@ import {
   getEvents,
   getEventsByType,
   getHolidays,
+  getWeather,
   updateEvent,
 } from '../../controllers/eventController.mjs';
 
@@ -71,6 +72,18 @@ export const eventRouter = async (fastify, opts, done) => {
     getHolidaysEventsOpts,
     async function cE(request, reply) {
       const newEvents = await getHolidays(fastify, request, reply);
+
+      return {
+        events: newEvents,
+      };
+    },
+  );
+
+  await fastify.post(
+    '/getWeather',
+    getHolidaysEventsOpts,
+    async function cE(request, reply) {
+      const newEvents = await getWeather(fastify, request, reply);
 
       return {
         events: newEvents,

@@ -1,3 +1,4 @@
+import xml2js from 'xml2js';
 import { EventModel } from '../db/models/Events.mjs';
 import { getUser } from './authController.mjs';
 
@@ -23,9 +24,6 @@ export async function getEventsByType(request, reply) {
       }).exec();
     } else if (request.params.type === 'holiday') {
       const { countryCode = 'PL' } = await getUser(request, reply);
-      if (!countryCode) {
-        throw new Error('Country code not found!');
-      }
 
       eventData = await EventModel.find({
         location: countryCode,
@@ -44,9 +42,9 @@ export async function getEventsByType(request, reply) {
     } else {
       throw new Error('Type not found!');
     }
-    
+
     return eventData;
-  } catch {
+  } catch (error) {
     throw new Error('Something went wrong! Try again');
   }
 }
@@ -104,9 +102,6 @@ export async function deleteEvent(request, reply) {
 export async function getHolidays(fastify, request, reply) {
   try {
     const { countryCode = 'PL' } = await getUser(request, reply);
-    if (!countryCode) {
-      throw new Error('Country code not found!');
-    }
 
     const holidaysEvents = await EventModel.find({
       location: countryCode,
@@ -142,6 +137,62 @@ export async function getHolidays(fastify, request, reply) {
       return holidays;
     } else {
       return holidaysEvents;
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error('Something went wrong! Try again');
+  }
+}
+
+export async function getWeather(fastify, request, reply) {
+  try {
+    const { city } = await getUser(request, reply);
+
+    const weatherEvents = await EventModel.find({
+      location: city,
+      type: 'weather',
+    }).exec();
+
+    if (weatherEvents.length === 0) {
+      const xmlString = await (
+        await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${51.246452}&lon=${22.568445}&mode=xml&appid=${
+            fastify.config.WEATHER_API_KEY
+          }`,
+        )
+      ).text();
+      xml2js.parseString(xmlString, (error, result) => {
+        if (error) {
+          console.error('Error parsing XML:', error);
+        } else {
+          console.log(result.weatherdata);
+          const forecastElements = result.weatherdata.time;
+          result.weatherdata.forecast[0].time.forEach((forecast) => {
+            console.table(forecast);
+          });
+        }
+
+        // Further processing or display logic can be performed here
+      });
+      /*
+      const parsedHolidays = getHolidays.map((holiday) => {
+        return {
+          title: holiday.name,
+          date: new Date(
+            holiday.date.substring(0, 3) +
+              (1 * holiday.date[3] + 1).toString() +
+              holiday.date.substring(3 + 1),
+          ),
+          country: holiday.country,
+          color: '#009900',
+          description: holiday.name,
+          type: 'holiday',
+          location: holiday.country,
+        };
+      });
+*/
+    } else {
+      return weatherEvents;
     }
   } catch (error) {
     console.log(error);
