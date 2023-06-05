@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { CalendarDate, parseDate } from '../../utils/types';
 import './Day.css';
 import { Months} from "../../configs/Weekdays";
 import { DayEvent, DayEventI } from '../DayEvent/DayEvent';
 import axios from "axios";
 import { mainRoute } from "../../utils/roots";
+import { EventsContext } from "../Calendar";
 
 interface DayProps {
   selected: CalendarDate,
@@ -29,12 +30,18 @@ const colors = [
 
 export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
-  const onTitleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { events, setEvents } = useContext(EventsContext);
+
+  const onTitleChangeSave = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const title = event.target.value;
     await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { title },
               }, { withCredentials: true,
             })
+  }
+
+  const onTitleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const title = event.target.value;
     setSelected({
       ...selected,
       events: [
@@ -48,13 +55,16 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
         ],
       });
   }
-
-  const onDescriptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onDescriptionChangeSave = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const description = event.target.value;
     await axios.put([mainRoute, 'events', event.target.id].join('/'), {
                 event: { description },
               }, { withCredentials: true
             })
+  }
+
+  const onDescriptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const description = event.target.value;
     setSelected({
       ...selected,
       events: [
@@ -147,6 +157,8 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
         <DayEvent
           key={index}
           onTitleChange={onTitleChange}
+          onDescriptionChangeSave={onDescriptionChangeSave}
+          onTitleChangeSave={onTitleChangeSave}
           onDescriptionChange={onDescriptionChange}
           onEventDelete={onEventDelete}
           onMinuteChange={onMinuteChange}
@@ -176,6 +188,10 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
               }, { withCredentials: true });
             const [parsedEvent] = parseDate([createdEvent]);
             
+            setEvents([
+              ...events,
+              parsedEvent,
+            ]);
             setSelected({
               ...selected,
               events: [

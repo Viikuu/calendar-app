@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, createContext, useContext } from "react";
 import { CalendarDate, DayEventI, Weekday, parseDate } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
 import { Day } from "./Day/Day";
@@ -6,11 +6,11 @@ import { Dot } from "./Dot/Dot";
 import axios from "axios";
 import { mainRoute } from "../utils/roots";
 
+export const EventsContext = createContext(null);
+
 export const Calendar: React.FC = () => {
-  
-  //const [nav, setNav] = useState<number>(0);
-  const [events, setEvents] = useState<Array<DayEventI>>([
-  ]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [events, setEvents] = useState<Array<DayEventI>>([]);
   const [selected, setSelected] = useState<CalendarDate | null>(null);
   const [year, setYear] = useState<number>((new Date).getFullYear());
   const [month, setMonth] = useState<number>((new Date).getMonth());
@@ -84,6 +84,7 @@ export const Calendar: React.FC = () => {
         const { data: {events} } = await axios.get<getEvents>([mainRoute, 'events'].join('/'), { withCredentials: true });
         const fetchedEvents = parseDate(events);
         setEvents(fetchedEvents);
+        setLoading(true);
       } catch (error) {
         console.log(error);
       }
@@ -91,20 +92,19 @@ export const Calendar: React.FC = () => {
   
   useEffect(() => {
     const dt = new Date();
+    getEvents();
     setYear(dt.getFullYear());
     setMonth(dt.getMonth());
-    getEvents();
   }, []);
 
   useEffect(() => {
     const dt = new Date(year, month);
     genDays(dt);
-  }, [year, month, events]);
+  }, [year, month, loading]);
 
   useEffect(() => {
     if (selected !== null && prevSelectedRef.current !== null) {
       setCalendarDays(calendarDays.map(el => el.day === selected.day && el.month === selected.month && el.year == selected.year ? selected : el));
-      getEvents();
     }
     prevSelectedRef.current = selected;
   },[selected]);
@@ -116,7 +116,7 @@ export const Calendar: React.FC = () => {
   const increaseMonth = () => {
     setMonth(() => month + 1);
   }
-  return (
+  return (<EventsContext.Provider value={{events,setEvents}}> 
     <div className="calendar-container">
       <div className="datepicker-container">
 
@@ -160,5 +160,6 @@ export const Calendar: React.FC = () => {
       </div>
       {selected !== null ? <Day selected = {selected} setSelected = {setSelected} />: ""}
     </div>
+    </EventsContext.Provider>
   )
 }
