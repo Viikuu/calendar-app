@@ -22,7 +22,7 @@ await fastify.register(fastifyEnv, {
   dotenv: true,
   schema: {
     type: 'object',
-    required: ['PORT', 'SECRET', 'DATABASE_HOST', 'HOLIDAY_API_URL'],
+    required: ['PORT', 'SECRET', 'DATABASE_HOST', 'HOLIDAY_API_URL', 'GEOCODING_API_URL', 'WEATHER_API_KEY'],
     properties: {
       DATABASE_HOST: {
         type: 'string',
@@ -43,7 +43,14 @@ await fastify.register(fastifyEnv, {
         type: 'string', //https://holidayapi.com/v1/holidays?pretty&key=GEGSAGRGREGBEBGEBERGERGJHGJFHG&country=PL&year=2022
         default: 'https://holidayapi.com/v1/holidays?pretty&key=',
       },
-    },
+      GEOCODING_API_URL: {
+        type: 'string', //https://geocode.maps.co/search?q={Lublin,Polska}
+        default: 'https://geocode.maps.co/search?q=',
+      },
+      WEATHER_API_KEY: {
+        type: 'string',
+        default: 'c1b3f1b3f1b3f1b3f1b3f1b3f1b3f1b3',
+      }
   },
 });
 
