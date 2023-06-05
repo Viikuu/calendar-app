@@ -23,6 +23,9 @@ const eventSchema = new Schema({
   type: {
     type: String,
   },
+  localization: {
+    type: String,
+  },
 });
 
 export const EventModel = mongoose.model('Event', eventSchema);

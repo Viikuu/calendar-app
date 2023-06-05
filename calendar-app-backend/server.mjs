@@ -8,6 +8,7 @@ import cors from '@fastify/cors';
 import { eventRouter } from './routes/Event/eventRoute.mjs';
 import { mongooseConn } from './db/index.mjs';
 import { authRouter } from './routes/Auth/authRoute.mjs';
+import { countryRouter } from './routes/Country/countryRoute.mjs';
 
 const fastify = Fastify({ logger: true });
 
@@ -22,7 +23,14 @@ await fastify.register(fastifyEnv, {
   dotenv: true,
   schema: {
     type: 'object',
-    required: ['PORT', 'SECRET', 'DATABASE_HOST', 'HOLIDAY_API_URL', 'GEOCODING_API_URL', 'WEATHER_API_KEY'],
+    required: [
+      'PORT',
+      'SECRET',
+      'DATABASE_HOST',
+      'HOLIDAY_API_URL',
+      'GEOCODING_API_URL',
+      'WEATHER_API_KEY',
+    ],
     properties: {
       DATABASE_HOST: {
         type: 'string',
@@ -50,7 +58,8 @@ await fastify.register(fastifyEnv, {
       WEATHER_API_KEY: {
         type: 'string',
         default: 'c1b3f1b3f1b3f1b3f1b3f1b3f1b3f1b3',
-      }
+      },
+    },
   },
 });
 
@@ -82,6 +91,8 @@ fastify.register(async (fastify, opts, done) => {
   await fastify.register(authRouter, { prefix: 'auth' });
 
   await fastify.register(eventRouter, { prefix: 'events' });
+
+  await fastify.register(countryRouter, { prefix: 'countries' });
 
   fastify.get('/ping', async (request, reply) => {
     return { pong: 'it worked!' };
