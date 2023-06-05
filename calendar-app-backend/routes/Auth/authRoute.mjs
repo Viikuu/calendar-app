@@ -41,7 +41,7 @@ export const authRouter = async (fastify, opts, done) => {
     });
 
     reply
-      .setCookie('token', token, {
+      .cookie('token', token, {
         path: '/',
         signed: false,
         secure: false, // send cookie over HTTPS only
@@ -79,16 +79,9 @@ export const authRouter = async (fastify, opts, done) => {
 
     await fastify.post('/logout', async function logout(request, reply) {
       if (request.user) {
-        reply.setCookie('token', '', {
-          path: '/',
-          signed: false,
-          secure: false, // send cookie over HTTPS only
-          httpOnly: true,
-          sameSite: 'strict', // alternative CSRF protection
-        });
+        reply.clearCookie('token');
         return {};
-      } else {
-        throw fastify.httpErrors.methodNotAllowed('User already logged out!');
+
       }
     });
 
