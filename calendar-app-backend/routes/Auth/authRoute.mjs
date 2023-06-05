@@ -74,18 +74,12 @@ export const authRouter = async (fastify, opts, done) => {
       }
     }); // check
 
-    await fastify.post(
-      '/logout',
-      authUserOpts,
-      async function logout(request, reply) {
-        if (request.user) {
-          reply.clearCookie('token');
-          return {};
-        } else {
-          throw fastify.httpErrors.methodNotAllowed('User already logged out!');
-        }
-      },
-    );
+    await fastify.post('/logout', async function logout(request, reply) {
+      if (request.user) {
+        reply.clearCookie('token');
+        return {};
+      }
+    });
 
     done();
   });
