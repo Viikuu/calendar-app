@@ -2,13 +2,15 @@ import axios from 'axios';
 import { userData } from '../../utils/types';
 import './Main.css'
 import { mainRoute } from '../../utils/roots';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataPicker } from '../../components/DataPicker';
 import { Logout } from '../../components/Logout/Logout';
 
 export function Main() {
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
+
   useEffect(() => {
 		async function chechAuth():Promise<boolean> {
 			try {
@@ -18,13 +20,26 @@ export function Main() {
 				return true;
 			}
 		}
-		chechAuth().then(value => value && navigate('/login') ) 
+		chechAuth().then(value => {
+			if (value) { 
+				navigate('/login')
+			} else {
+				setLoading(false);
+			}
+		}); 
 		
   }, []);
 
 	return <>
-		<Logout />
-    <DataPicker />
+		{loading ? <>
+			<div className="loading">
+			</div>
+			</>
+			: (<>
+			<Logout />
+				<DataPicker />
+				</>
+		)}
   </>
 
 }
