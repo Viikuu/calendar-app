@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  background: #1a1a1d;
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-direction: row;
+  background: #1a1a1d;
+}
+
+.setOpts {
+  display: flex;
+  flex-direction: column;
+}
+
+.opt {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  padding: auto;
+  margin: auto;
+}
+

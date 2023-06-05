@@ -67,6 +67,9 @@ export const authRouter = async (fastify, opts, done) => {
           user: {
             _id: userData._id,
             email: userData.email,
+            city: userData.city,
+            country: userData.country,
+            options: userData.options,
           },
         };
       } else {
@@ -78,6 +81,7 @@ export const authRouter = async (fastify, opts, done) => {
       if (request.user) {
         reply.clearCookie('token');
         return {};
+
       }
     });
 

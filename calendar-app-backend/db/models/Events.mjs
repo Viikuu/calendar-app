@@ -18,7 +18,12 @@ const eventSchema = new Schema({
   },
   userId: {
     type: Schema.Types.ObjectId,
-    required: true,
+  },
+  type: {
+    type: String,
+  },
+  location: {
+    type: String,
   },
 });
 

@@ -62,7 +62,12 @@ export const getUserOpts = {
       200: {
         type: 'object',
         properties: {
-          user: userSchema,
+          user: {
+            ...userSchema,
+            city: { type: 'string' },
+            country: { type: 'string' },
+            options: { type: 'object' },
+          },
         },
       },
     },

@@ -5,7 +5,7 @@ import { mainRoute } from '../../utils/roots';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataPicker } from '../../components/DataPicker';
-import { Logout } from '../../components/Logout/Logout';
+import { Navbar } from '../../components/Navbar/Navbar';
 
 export function Main() {
 	const [loading, setLoading] = useState(true);
@@ -31,13 +31,14 @@ export function Main() {
   }, []);
 
 	return <>
+
 		{loading ? <>
 			<div className="loading">
 			</div>
 			</>
 			: (<>
-			<Logout />
-				<DataPicker />
+			  <Navbar />
+        <DataPicker />
 				</>
 		)}
   </>

@@ -7,6 +7,7 @@ const eventSchema = {
   },
   title: { type: 'string' },
   description: { type: 'string' },
+  type: { type: 'string' },
 };
 
 export const getEventsOpts = {
@@ -20,6 +21,35 @@ export const getEventsOpts = {
             items: {
               type: 'object',
               properties: eventSchema,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const getEventsByTypeOpts = {
+  schema: {
+    params: {
+      type: 'object',
+      required: ['type'],
+      properties: {
+        type: { type: 'string' },
+      },
+    },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          events: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                ...eventSchema,
+                location: { type: 'string' },
+              },
             },
           },
         },
@@ -112,6 +142,28 @@ export const deleteEventsOpts = {
             properties: {
               _id: { type: 'string' },
               ...eventSchema,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const getHolidaysEventsOpts = {
+  schema: {
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          events: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                ...eventSchema,
+                location: { type: 'string' },
+              },
             },
           },
         },
