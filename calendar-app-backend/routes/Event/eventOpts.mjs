@@ -46,7 +46,10 @@ export const getEventsByTypeOpts = {
             type: 'array',
             items: {
               type: 'object',
-              properties: eventSchema,
+              properties: {
+                ...eventSchema,
+                location: { type: 'string' },
+              },
             },
           },
         },
@@ -139,6 +142,28 @@ export const deleteEventsOpts = {
             properties: {
               _id: { type: 'string' },
               ...eventSchema,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const getHolidaysEventsOpts = {
+  schema: {
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          events: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                ...eventSchema,
+                location: { type: 'string' },
+              },
             },
           },
         },

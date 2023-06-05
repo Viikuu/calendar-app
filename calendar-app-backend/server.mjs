@@ -27,7 +27,7 @@ await fastify.register(fastifyEnv, {
       'PORT',
       'SECRET',
       'DATABASE_HOST',
-      'HOLIDAY_API_URL',
+      'HOLIDAY_API_KEY',
       'GEOCODING_API_URL',
       'WEATHER_API_KEY',
     ],
@@ -47,7 +47,7 @@ await fastify.register(fastifyEnv, {
         default:
           'bbde043a83739b21d74c82110cb9018e4ce0fab4a3ee4a99d6f032e779346227a2be4efb4735827d4b308ab12a3c7c8651b5db4ef3ef1826d952c870c8e9a493',
       },
-      HOLIDAY_API_URL: {
+      HOLIDAY_API_KEY: {
         type: 'string', //https://holidayapi.com/v1/holidays?pretty&key=GEGSAGRGREGBEBGEBERGERGJHGJFHG&country=PL&year=2022
         default: 'https://holidayapi.com/v1/holidays?pretty&key=',
       },

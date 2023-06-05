@@ -18,11 +18,12 @@ const userSchema = new Schema({
   },
   city: {
     type: String,
-    required: true,
   },
   country: {
     type: String,
-    required: true,
+  },
+  countryCode: {
+    type: String,
   },
 });
 

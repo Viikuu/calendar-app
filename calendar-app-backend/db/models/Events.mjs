@@ -18,12 +18,11 @@ const eventSchema = new Schema({
   },
   userId: {
     type: Schema.Types.ObjectId,
-    required: true,
   },
   type: {
     type: String,
   },
-  localization: {
+  location: {
     type: String,
   },
 });

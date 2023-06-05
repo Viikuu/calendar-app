@@ -3,6 +3,7 @@ import {
   deleteEvent,
   getEvents,
   getEventsByType,
+  getHolidays,
   updateEvent,
 } from '../../controllers/eventController.mjs';
 
@@ -11,6 +12,7 @@ import {
   deleteEventsOpts,
   getEventsByTypeOpts,
   getEventsOpts,
+  getHolidaysEventsOpts,
   updateEventsOpts,
 } from './eventOpts.mjs';
 
@@ -61,6 +63,18 @@ export const eventRouter = async (fastify, opts, done) => {
         fastify.httpErrors.notFound('Event with given id not found!');
       }
       return { event: deletedEvent };
+    },
+  );
+
+  await fastify.post(
+    '/getHolidays',
+    getHolidaysEventsOpts,
+    async function cE(request, reply) {
+      const newEvents = await getHolidays(fastify, request, reply);
+
+      return {
+        events: newEvents,
+      };
     },
   );
 
