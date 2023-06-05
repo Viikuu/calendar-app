@@ -42,6 +42,15 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
   const onTitleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const title = event.target.value;
+    setEvents([
+      ...events.map((el) => {
+          if (el._id == event.target.id) {
+            
+            return { ...el, title }
+          }
+          return el;
+        }),
+    ])
     setSelected({
       ...selected,
       events: [
@@ -65,6 +74,16 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
   const onDescriptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const description = event.target.value;
+
+    setEvents([
+      ...events.map((el) => {
+          if (el._id == event.target.id) {
+            
+            return { ...el, description }
+          }
+          return el;
+        }),
+    ])
     setSelected({
       ...selected,
       events: [
