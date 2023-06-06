@@ -138,3 +138,7 @@ svg {
   padding-top: 5px;
   flex-wrap: wrap;
 }
+
+.loading {
+ background: #1a1a1d;
+}

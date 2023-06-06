@@ -7,11 +7,13 @@ type DayEventProps = {
   onTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   onEventDelete: (id: string) => void,
+  onDescriptionChangeSave: any,
+  onTitleChangeSave: any, 
   onMinuteChange: any,
   onHourChange: any,
 }
 
-export const DayEvent: React.FC<DayEventProps> = ({ dayEventProp, onTitleChange, onDescriptionChange, onEventDelete, onHourChange, onMinuteChange } ) => {
+export const DayEvent: React.FC<DayEventProps> = ({ dayEventProp, onTitleChange, onDescriptionChange, onEventDelete, onHourChange, onMinuteChange, onTitleChangeSave,onDescriptionChangeSave  } ) => {
   return (
     <div className="dayEvent" style={{ backgroundColor: dayEventProp.color }}>
       <div className="dayEventContainer">
@@ -36,13 +38,13 @@ export const DayEvent: React.FC<DayEventProps> = ({ dayEventProp, onTitleChange,
       </div>
       <div>
           <span style={{margin: '10px'}}>Title:</span>
-        <input value={dayEventProp.title} id={dayEventProp._id} onChange={onTitleChange} />
+        <input value={dayEventProp.title} id={dayEventProp._id} onChange={onTitleChange} onBlur={onTitleChangeSave} />
       </div>
       
       
       <div className="dayEventDescription">
         <span style={{margin: '10px'}}>Description:</span>
-        <input type="text" value={dayEventProp.description} id={dayEventProp._id} onChange={onDescriptionChange}/>
+        <input type="text" value={dayEventProp.description} id={dayEventProp._id} onChange={onDescriptionChange} onBlur={onDescriptionChangeSave}/>
       </div>
     </div>
   )
