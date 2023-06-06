@@ -146,51 +146,104 @@ export async function getHolidays(fastify, request, reply) {
 
 export async function getWeather(fastify, request, reply) {
   try {
-    const { city } = await getUser(request, reply);
-
+    const { city = 'Lublin' } = await getUser(request, reply);
+    if (!city) {
+      return reply.code(404).send({ message: 'Users City not found!' });
+    }
     const weatherEvents = await EventModel.find({
       location: city,
       type: 'weather',
+      date: {
+        $gte: new Date(),
+      },
     }).exec();
 
-    if (weatherEvents.length === 0) {
+    if (weatherEvents.length < 5) {
+      const geoLoc = await (
+        await fetch(`https://geocode.maps.co/search?q={${city}}`)
+      ).json();
+
       const xmlString = await (
         await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${51.246452}&lon=${22.568445}&mode=xml&appid=${
-            fastify.config.WEATHER_API_KEY
-          }`,
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${geoLoc[0].lat}&lon=${geoLoc[0].lon}&mode=xml&appid=${fastify.config.WEATHER_API_KEY}`,
         )
       ).text();
       xml2js.parseString(xmlString, (error, result) => {
         if (error) {
           console.error('Error parsing XML:', error);
         } else {
-          console.log(result.weatherdata);
           const forecastElements = result.weatherdata.time;
+          let forecasts = [];
           result.weatherdata.forecast[0].time.forEach((forecast) => {
-            console.table(forecast);
+            forecasts.push({
+              time: new Date(forecast.$.from),
+              symbol: forecast.symbol[0].$.name,
+              temperature: forecast.temperature[0].$.value,
+            });
           });
+          const resultFor = [];
+          for (let i = 0; i < 6; i++) {
+            const date = new Date(
+              new Date().getTime() + i * 24 * 60 * 60 * 1000,
+            );
+            const group = forecasts.filter(
+              (forecast) => forecast.time.getDate() === date.getDate(),
+            );
+            const meanTemp = Math.round(
+              group.reduce((a, b) => a + Number(b.temperature), 0) /
+                group.length -
+                273,
+            );
+            const mostSymbol = group
+              .sort(
+                (a, b) =>
+                  group.filter((v) => v.symbol === a.symbol).length -
+                  group.filter((v) => v.symbol === b.symbol).length,
+              )
+              .pop();
+            resultFor.push({
+              location: city,
+              date: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+              ),
+              symbol: mostSymbol.symbol,
+              temperature: meanTemp,
+            });
+          }
+          const parsedWeather = resultFor.map((weather) => {
+            return {
+              title: weather.symbol,
+              date: weather.date,
+              location: city,
+              color: '#009900',
+              description: weather.temperature + '°C',
+              type: 'weather',
+            };
+          });
+          console.log(parsedWeather);
+          for (let weather of parsedWeather) {
+            if (weatherEvents.some((event) => event.date === weather.date)) {
+              const newWeather = EventModel.findOneAndUpdate(
+                {
+                  location: city,
+                  type: 'weather',
+                  date: weather.date,
+                },
+                { ...weather },
+                {
+                  new: true,
+                },
+              );
+            } else {
+              const newWeather = new EventModel({ ...weather });
+              newWeather.save();
+            }
+          }
+          return parsedWeather;
         }
-
-        // Further processing or display logic can be performed here
       });
-      /*
-      const parsedHolidays = getHolidays.map((holiday) => {
-        return {
-          title: holiday.name,
-          date: new Date(
-            holiday.date.substring(0, 3) +
-              (1 * holiday.date[3] + 1).toString() +
-              holiday.date.substring(3 + 1),
-          ),
-          country: holiday.country,
-          color: '#009900',
-          description: holiday.name,
-          type: 'holiday',
-          location: holiday.country,
-        };
-      });
-*/
     } else {
       return weatherEvents;
     }

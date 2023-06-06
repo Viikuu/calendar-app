@@ -28,7 +28,6 @@ await fastify.register(fastifyEnv, {
       'SECRET',
       'DATABASE_HOST',
       'HOLIDAY_API_KEY',
-      'GEOCODING_API_URL',
       'WEATHER_API_KEY',
     ],
     properties: {
@@ -50,10 +49,6 @@ await fastify.register(fastifyEnv, {
       HOLIDAY_API_KEY: {
         type: 'string', //https://holidayapi.com/v1/holidays?pretty&key=GEGSAGRGREGBEBGEBERGERGJHGJFHG&country=PL&year=2022
         default: 'https://holidayapi.com/v1/holidays?pretty&key=',
-      },
-      GEOCODING_API_URL: {
-        type: 'string', //https://geocode.maps.co/search?q={Lublin,Polska}
-        default: 'https://geocode.maps.co/search?q=',
       },
       WEATHER_API_KEY: {
         type: 'string',
