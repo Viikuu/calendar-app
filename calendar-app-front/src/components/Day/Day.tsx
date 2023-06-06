@@ -101,7 +101,10 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
   const onEventDelete = async (id: string) => {
     await axios.delete([mainRoute, 'events', id].join('/'), {
              withCredentials: true
-            })
+    })
+    setEvents([
+      ...events.filter((el) => el._id !== id)
+    ])
     setSelected({
       ...selected,
       events: [
@@ -113,6 +116,21 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
   const onMinuteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const minute = Number(event.target.value);
     let date = new Date();
+    setEvents([
+      ...events.map((el) => {
+          if (el._id == event.target.id) {
+            date = new Date(
+              el.date.getFullYear(),
+              el.date.getMonth(),
+              el.date.getDate(),
+              el.date.getHours(),
+              minute,
+            );
+            return { ...el, date }
+          }
+          return el;
+        }),
+    ])
     setSelected({
       ...selected,
       events: [
@@ -141,6 +159,21 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
   const onHourChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const hour = Number(event.target.value);
     let date = new Date();
+    setEvents([
+      ...events.map((el) => {
+          if (el._id == event.target.id) {
+            date = new Date(
+              el.date.getFullYear(),
+              el.date.getMonth(),
+              el.date.getDate(),
+              hour,
+              el.date.getMinutes(),
+            );
+            return { ...el, date }
+          }
+          return el;
+        }),
+    ])
     setSelected({
       ...selected,
       events: [
