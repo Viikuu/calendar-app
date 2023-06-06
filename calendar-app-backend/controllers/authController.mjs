@@ -11,7 +11,8 @@ export async function createUser(request, reply, fastify) {
       email,
       city: '',
       country: '',
-      options: {},
+      showHolidays: false,
+      showWeather: false,
     });
     return await newUser.save();
   } catch (error) {

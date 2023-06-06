@@ -63,13 +63,15 @@ export const authRouter = async (fastify, opts, done) => {
     await fastify.get('/', getUserOpts, async function gU(request, reply) {
       if (request.user) {
         const { password, ...userData } = await getUser(request, reply);
+
         return {
           user: {
             _id: userData._id,
             email: userData.email,
-            city: userData.city,
-            country: userData.country,
-            options: userData.options,
+            city: userData?.city,
+            country: userData?.country,
+            showHolidays: userData?.showHolidays,
+            showWeather: userData?.showWeather,
           },
         };
       } else {
@@ -81,7 +83,6 @@ export const authRouter = async (fastify, opts, done) => {
       if (request.user) {
         reply.clearCookie('token');
         return {};
-
       }
     });
 

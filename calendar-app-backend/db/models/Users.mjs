@@ -13,8 +13,11 @@ const userSchema = new Schema({
     required: true,
     min: 8,
   },
-  options: {
-    type: Object,
+  showHolidays: {
+    type: Boolean,
+  },
+  showWeather: {
+    type: Boolean,
   },
   city: {
     type: String,

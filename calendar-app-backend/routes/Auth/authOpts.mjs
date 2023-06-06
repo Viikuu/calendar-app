@@ -3,6 +3,10 @@ const userSchema = {
   properties: {
     _id: { type: 'string' },
     email: { type: 'string' },
+    city: { type: 'string' },
+    country: { type: 'string' },
+    showHolidays: { type: 'boolean' },
+    showWeather: { type: 'boolean' },
   },
 };
 
@@ -64,9 +68,6 @@ export const getUserOpts = {
         properties: {
           user: {
             ...userSchema,
-            city: { type: 'string' },
-            country: { type: 'string' },
-            options: { type: 'object' },
           },
         },
       },
