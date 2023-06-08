@@ -11,12 +11,11 @@ export const Modal: React.FC<ModalProps> = (props) => {
     {props.show ? <div className="modal">
       
       <div className="modal-content">
-        <div className="bar">
-          <button className="closeModal xButton" onClick={() => {
-              props.setShow(false);
-          }}
-          > X </button>
-        </div>
+        <button className="closeModal xButton" onClick={() => {
+            props.setShow(false);
+        }}
+        > X </button>
+
         <div>
           {props.children}
         </div>

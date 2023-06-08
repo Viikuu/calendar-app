@@ -18,6 +18,7 @@
 
 /* Modal Content/Box */
 .modal-content {
+  position: relative;
   height: 15rem;
   width: 30rem;
   display: flex;
@@ -32,7 +33,9 @@
 }
 
 .closeModal {
-  position: relative;
+  position: absolute;
+  top:0;
+  right: 0;
   color: black;
 
 }

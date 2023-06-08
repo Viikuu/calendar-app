@@ -1,44 +1,49 @@
 import axios from 'axios';
-import { userData } from '../../utils/types';
+import { userData, userType } from '../../utils/types';
 import './Main.css'
 import { mainRoute } from '../../utils/roots';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataPicker } from '../../components/DataPicker';
 import { Navbar } from '../../components/Navbar/Navbar';
 
+export const UserContext = createContext<userContextType|null>(null);
+
+export type userContextType = {
+	user: userType, 
+	setUser: React.Dispatch<React.SetStateAction<userType>>,
+}
+
 export function Main() {
-	const [loading, setLoading] = useState(true);
+	const [user, setUser] = useState<userType|null>(null);
 	const navigate = useNavigate();
 
   useEffect(() => {
-		async function chechAuth():Promise<boolean> {
+		async function chechAuth(): Promise<void> {
 			try {
-        const { data } = await axios.get<userData>([mainRoute, 'auth'].join('/'), { withCredentials: true });
-				return false;
+				const { data } = await axios.get<userData>([mainRoute, 'auth'].join('/'), { withCredentials: true });
+				setUser(data.user);
 			} catch (error) {
-				return true;
+				navigate('/login')
 			}
 		}
-		chechAuth().then(value => {
-			if (value) { 
-				navigate('/login')
-			} else {
-				setLoading(false);
-			}
-		}); 
-		
-  }, []);
+
+		(async () => {
+			await chechAuth()
+		})(); 
+	}, []);
+	
 
 	return <>
-
-		{loading ? <>
+		{!user ? <>
 			<div className="loading">
 			</div>
 			</>
 			: (<>
-			  <Navbar />
-        <DataPicker />
+					<UserContext.Provider value={{user,setUser} as userContextType}>
+						<Navbar />
+						<DataPicker />
+					</UserContext.Provider>
 				</>
 		)}
   </>
