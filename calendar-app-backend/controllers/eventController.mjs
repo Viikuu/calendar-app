@@ -125,9 +125,8 @@ export async function getHolidays(fastify, request, reply) {
               (1 * holiday.date[3] + 1).toString() +
               holiday.date.substring(3 + 1),
           ),
-          country: holiday.country,
           color: '#009900',
-          description: holiday.name,
+          description: holiday.public ? 'Public Holiday' : 'Holiday',
           type: 'holiday',
           location: holiday.country,
         };
@@ -158,7 +157,7 @@ export async function getWeather(fastify, request, reply) {
       },
     }).exec();
 
-    if (weatherEvents.length < 5) {
+    if (weatherEvents.length < 6) {
       const geoLoc = await (
         await fetch(`https://geocode.maps.co/search?q={${city}}`)
       ).json();
@@ -168,11 +167,11 @@ export async function getWeather(fastify, request, reply) {
           `https://api.openweathermap.org/data/2.5/forecast?lat=${geoLoc[0].lat}&lon=${geoLoc[0].lon}&mode=xml&appid=${fastify.config.WEATHER_API_KEY}`,
         )
       ).text();
-      xml2js.parseString(xmlString, (error, result) => {
+
+      xml2js.parseString(xmlString, async (error, result) => {
         if (error) {
           console.error('Error parsing XML:', error);
         } else {
-          const forecastElements = result.weatherdata.time;
           let forecasts = [];
           result.weatherdata.forecast[0].time.forEach((forecast) => {
             forecasts.push({
@@ -181,10 +180,16 @@ export async function getWeather(fastify, request, reply) {
               temperature: forecast.temperature[0].$.value,
             });
           });
+          const now = new Date();
+          const today = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+          ).getTime();
           const resultFor = [];
           for (let i = 0; i < 6; i++) {
             const date = new Date(
-              new Date().getTime() + i * 24 * 60 * 60 * 1000,
+              today + i * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000,
             );
             const group = forecasts.filter(
               (forecast) => forecast.time.getDate() === date.getDate(),
@@ -222,10 +227,16 @@ export async function getWeather(fastify, request, reply) {
               type: 'weather',
             };
           });
-          console.log(parsedWeather);
           for (let weather of parsedWeather) {
-            if (weatherEvents.some((event) => event.date === weather.date)) {
-              const newWeather = EventModel.findOneAndUpdate(
+            if (
+              weatherEvents.some(
+                (event) =>
+                  event.date.getFullYear() === weather.date.getFullYear() &&
+                  event.date.getMonth() === weather.date.getMonth() &&
+                  event.date.getDate() === weather.date.getDate(),
+              )
+            ) {
+              const newWeather = await EventModel.findOneAndUpdate(
                 {
                   location: city,
                   type: 'weather',
@@ -238,12 +249,18 @@ export async function getWeather(fastify, request, reply) {
               );
             } else {
               const newWeather = new EventModel({ ...weather });
-              newWeather.save();
+              await newWeather.save();
             }
           }
-          return parsedWeather;
         }
       });
+      return await EventModel.find({
+        location: city,
+        type: 'weather',
+        date: {
+          $gte: new Date(),
+        },
+      }).exec();
     } else {
       return weatherEvents;
     }

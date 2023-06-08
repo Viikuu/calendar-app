@@ -42,7 +42,6 @@ export const eventRouter = async (fastify, opts, done) => {
     getHolidaysEventsOpts,
     async function cE(request, reply) {
       const newEvents = await getWeather(fastify, request, reply);
-
       return {
         events: newEvents,
       };
