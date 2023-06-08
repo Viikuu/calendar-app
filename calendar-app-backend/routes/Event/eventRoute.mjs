@@ -26,6 +26,30 @@ export const eventRouter = async (fastify, opts, done) => {
   });
 
   await fastify.get(
+    '/getHolidays',
+    getHolidaysEventsOpts,
+    async function cE(request, reply) {
+      const newEvents = await getHolidays(fastify, request, reply);
+
+      return {
+        events: newEvents,
+      };
+    },
+  );
+
+  await fastify.get(
+    '/getWeather',
+    getHolidaysEventsOpts,
+    async function cE(request, reply) {
+      const newEvents = await getWeather(fastify, request, reply);
+
+      return {
+        events: newEvents,
+      };
+    },
+  );
+
+  await fastify.get(
     '/:type',
     getEventsByTypeOpts,
     async function gEbT(request, reply) {
@@ -64,30 +88,6 @@ export const eventRouter = async (fastify, opts, done) => {
         fastify.httpErrors.notFound('Event with given id not found!');
       }
       return { event: deletedEvent };
-    },
-  );
-
-  await fastify.post(
-    '/getHolidays',
-    getHolidaysEventsOpts,
-    async function cE(request, reply) {
-      const newEvents = await getHolidays(fastify, request, reply);
-
-      return {
-        events: newEvents,
-      };
-    },
-  );
-
-  await fastify.post(
-    '/getWeather',
-    getHolidaysEventsOpts,
-    async function cE(request, reply) {
-      const newEvents = await getWeather(fastify, request, reply);
-
-      return {
-        events: newEvents,
-      };
     },
   );
 

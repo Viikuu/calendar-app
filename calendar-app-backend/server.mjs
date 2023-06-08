@@ -9,6 +9,7 @@ import { eventRouter } from './routes/Event/eventRoute.mjs';
 import { mongooseConn } from './db/index.mjs';
 import { authRouter } from './routes/Auth/authRoute.mjs';
 import { countryRouter } from './routes/Country/countryRoute.mjs';
+import { userRouter } from './routes/User/userRouter.mjs';
 
 const fastify = Fastify({ logger: true });
 
@@ -88,6 +89,8 @@ fastify.register(async (fastify, opts, done) => {
   await fastify.register(eventRouter, { prefix: 'events' });
 
   await fastify.register(countryRouter, { prefix: 'countries' });
+
+  await fastify.register(userRouter, { prefix: 'user' });
 
   fastify.get('/ping', async (request, reply) => {
     return { pong: 'it worked!' };

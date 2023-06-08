@@ -29,7 +29,6 @@ export async function updateUser(request, reply) {
     ).exec();
     return existingUser;
   } catch (error) {
-    )
     throw new Error(`Something went wrong! Try again`);
   }
 }
