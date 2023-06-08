@@ -1,34 +1,30 @@
+
 .modal {
-  /* Hidden by default */
   position: fixed;
-  /* Stay in place */
   z-index: 1;
-  /* Sit on top */
   left: 0;
   top: 0;
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   overflow: auto;
-  /* Enable scroll if needed */
   background-color: rgb(0, 0, 0);
-  /* Fallback color */
+
   background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 /* Modal Content/Box */
 .modal-content {
-  height: 30vh;
-  width: 20vw;
+  height: 15rem;
+  width: 30rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
+
+  margin-top:0;
   align-items: center;
   background-color: #1a1a1d;
   border: 1px solid #888;
@@ -36,8 +32,14 @@
 }
 
 .closeModal {
-  position: absolute;
+  position: relative;
   color: black;
-  top: 35vh;
-  right: 81vh;
+
+}
+.bar {
+  position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5rem;
+    cursor: pointer;
 }
