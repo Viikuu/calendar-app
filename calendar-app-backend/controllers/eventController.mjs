@@ -149,11 +149,15 @@ export async function getWeather(fastify, request, reply) {
     if (!city) {
       return reply.code(404).send({ message: 'Users City not found!' });
     }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
     const weatherEvents = await EventModel.find({
       location: city,
       type: 'weather',
       date: {
-        $gte: new Date(),
+        $gte: today,
       },
     }).exec();
 
@@ -180,17 +184,10 @@ export async function getWeather(fastify, request, reply) {
               temperature: forecast.temperature[0].$.value,
             });
           });
-          const now = new Date();
-          const today = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
-          ).getTime();
+
           const resultFor = [];
           for (let i = 0; i < 6; i++) {
-            const date = new Date(
-              today + i * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000,
-            );
+            const date = new Date(today.getTime() + i * 24 * 60 * 60 * 1000);
             const group = forecasts.filter(
               (forecast) => forecast.time.getDate() === date.getDate(),
             );
@@ -211,7 +208,7 @@ export async function getWeather(fastify, request, reply) {
               date: new Date(
                 date.getFullYear(),
                 date.getMonth(),
-                date.getDate() + 1,
+                date.getDate(),
               ),
               symbol: mostSymbol.symbol,
               temperature: meanTemp,
