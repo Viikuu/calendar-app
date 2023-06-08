@@ -1,24 +1,38 @@
-import React, { useEffect, useRef, useState, createContext, useContext } from "react";
+import { useEffect, useRef, useState, createContext, useContext } from "react";
 import { CalendarDate, DayEventI, Weekday, parseDate } from '../utils/types';
 import { Months, Weekdays } from "../configs/Weekdays";
 import { Day } from "./Day/Day";
 import { Dot } from "./Dot/Dot";
 import axios from "axios";
 import { mainRoute } from "../utils/roots";
+import { UserContext, userContextType } from "../pages/Main/Main";
+import { useNavigate } from "react-router-dom";
+import { Weather } from "./Weather/Weather";
 
-export const EventsContext = createContext(null);
+export const EventsContext = createContext<EventContextType | null>(null);
+
+export type EventContextType = {
+  events: Array<DayEventI>,
+  setEvents: React.Dispatch<React.SetStateAction<DayEventI[]>>,
+}
 
 export const Calendar: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [events, setEvents] = useState<Array<DayEventI>>([]);
+  const [weatherEvents, setWeatherEvents] = useState<Array<DayEventI>>([]);
+  const [holidayEvents, setHolidayEvents] = useState<Array<DayEventI>>([]);
   const [selected, setSelected] = useState<CalendarDate | null>(null);
   const [year, setYear] = useState<number>((new Date).getFullYear());
   const [month, setMonth] = useState<number>((new Date).getMonth());
   const [calendarDays, setCalendarDays] = useState<CalendarDate[]>([]);
 
+  const { user, setUser } = useContext(UserContext) as userContextType;
+
   const prevSelectedRef = useRef<CalendarDate | null>(null);
 
-  interface getEvents {
+  interface getEventsType {
     events: Array<DayEventI>
   }
   async function genDays(dt: Date) {
@@ -56,6 +70,8 @@ export const Calendar: React.FC = () => {
           year: y,
           weekday: (new Date(y, m, d)).toLocaleDateString('en', { weekday: 'long' }) as Weekday,
           events: [...events.filter(event => event.date.getDate() === d && event.date.getMonth() === m && event.date.getFullYear() === y)],
+          weatherEvents: weatherEvents.filter(event => event.date.getDate() === d && event.date.getMonth() === m && event.date.getFullYear() === y)[0],
+          holidayEvents: [...holidayEvents.filter(event => event.date.getDate() === d && event.date.getMonth() === m && event.date.getFullYear() === y)],
           active: false,
         });
       } else {
@@ -65,6 +81,8 @@ export const Calendar: React.FC = () => {
           year: thisYear,
           weekday: (new Date(thisYear, thisMonth, i - paddingDays + 1)).toLocaleDateString('en', { weekday: 'long' }) as Weekday,
           events: [...events.filter(event => event.date.getDate() === i - paddingDays + 1 && event.date.getMonth() === thisMonth && event.date.getFullYear() === thisYear)],
+          weatherEvents: weatherEvents.filter(event => event.date.getDate() === i - paddingDays + 1 && event.date.getMonth() === thisMonth && event.date.getFullYear() === thisYear)[0],
+          holidayEvents: [...holidayEvents.filter(event => event.date.getDate() === i - paddingDays + 1 && event.date.getMonth() === thisMonth && event.date.getFullYear() === thisYear)],
           active: true,
         });
       }
@@ -79,20 +97,58 @@ export const Calendar: React.FC = () => {
       today.getFullYear() === dt.year;
   }
 
+  async function getTypedEvents(type: string) { //getWeather, getHolidays
+    const { data: { events } } = await axios.get<getEventsType>([mainRoute, 'events', type].join('/'), { withCredentials: true });
+    const fetchedEvents = parseDate(events);
+    console.log(fetchedEvents);
+    return fetchedEvents;
+  }
+
   async function getEvents() {
-      try {
-        const { data: {events} } = await axios.get<getEvents>([mainRoute, 'events'].join('/'), { withCredentials: true });
-        const fetchedEvents = parseDate(events);
-        setEvents(fetchedEvents);
-        setLoading(true);
-      } catch (error) {
-        console.log(error);
+    try {
+      if (user.showWeather) {
+        setWeatherEvents(await getTypedEvents('getWeather'));
       }
+      if (user.showHolidays) {
+        setHolidayEvents(await getTypedEvents('getHolidays'));
+      }
+      const { data: { events } } = await axios.get<getEventsType>([mainRoute, 'events'].join('/'), { withCredentials: true });
+      const fetchedEvents = parseDate(events);
+      setEvents(fetchedEvents);
+      
+    } catch (error) {
+      navigate('/login');
     }
+  }
+
+  useEffect(() => {
+    if (user.showHolidays && !loading) {
+      (async () => { 
+        setHolidayEvents(await getTypedEvents('getHolidays'));
+      })();
+    } else {
+      setHolidayEvents([]);
+    }
+  }, [user.showHolidays]);
+
+  useEffect(() => {
+    if (user.showWeather && !loading) {
+      (async () => { 
+        setWeatherEvents(await getTypedEvents('getWeather'));
+      })();
+    } else {
+      setWeatherEvents([]);
+    }
+  }, [user.showWeather]);
   
   useEffect(() => {
     const dt = new Date();
-    getEvents();
+    (async () => {
+      await getEvents();
+      console.log(123);
+      setLoading(false);
+    })();
+    
     setYear(dt.getFullYear());
     setMonth(dt.getMonth());
   }, []);
@@ -107,7 +163,7 @@ export const Calendar: React.FC = () => {
       setCalendarDays(calendarDays.map(el => el.day === selected.day && el.month === selected.month && el.year == selected.year ? selected : el));
     }
     prevSelectedRef.current = selected;
-  },[selected]);
+  }, [selected]);
 
   const decreaseMonth = () => {
     setMonth(() => month - 1);
@@ -116,50 +172,60 @@ export const Calendar: React.FC = () => {
   const increaseMonth = () => {
     setMonth(() => month + 1);
   }
-  return (<EventsContext.Provider value={{events,setEvents}}> 
+  return (
+  <EventsContext.Provider value={{ events, setEvents }}>
     <div className="calendar-container">
-      <div className="datepicker-container">
+      
+        <div className="datepicker-container">
 
-        <div className="month-nav-container">
-          <div className="month-nav-info"> {year}. {Months[month]} </div>
-          <div>
-            <button onClick={decreaseMonth}> {' < '}</button>
-            <button onClick={increaseMonth}> {' > '} </button>
+          <div className="month-nav-container">
+            <div className="month-nav-info"> {Months[month]} {year}</div>
+            <div>
+              <button onClick={decreaseMonth}> {' < '}</button>
+              <button onClick={increaseMonth}> {' > '} </button>
+            </div>
           </div>
-        </div>
 
-        <div className="weekdays-container">
-          { Weekdays.map(day => (
-            <div key={day} className="week-day"> {day} </div>
-          ))}
-        </div>
-        <div className="calendar">
-          {calendarDays.length !== 0 && calendarDays.map((date, index) => (
-            <div key={index}
-              className={`calendarDays ${!date.active ? 'noActive': ''} ${selected?.day === date.day && selected?.month === date.month && selected?.year === date.year ? 'selected': ''} ${isToday(date) ? 'isToday': ''}`}
-              onClick={
-                (e) => {
-                  const thisCalendarDate = calendarDays[index];
-                  if (selected?.day === thisCalendarDate.day && selected?.month === thisCalendarDate.month && selected?.year === thisCalendarDate.year) {
-                    setSelected(null);
-                  } else {
-                    setSelected(thisCalendarDate);
+          <div className="weekdays-container">
+            {Weekdays.map(day => (
+              <div key={day} className="week-day"> {day} </div>
+            ))}
+          </div>
+          <div className="calendar">
+            {calendarDays.length !== 0 && calendarDays.map((date, index) => (
+              <div key={index}
+                className={`calendarDays ${!date.active ? 'noActive' : ''} 
+              ${date.weekday === 'Saturday' ? 'saturday' : ''} 
+              ${date.weekday === 'Sunday' ? 'sunday' : ''} 
+              ${selected?.day === date.day && selected?.month === date.month && selected?.year === date.year ? 'selected' : ''} 
+              ${date.holidayEvents.some(event=> event.description === 'Public Holiday') ? 'holiday' : ''}
+              ${isToday(date) ? 'isToday' : ''}`}
+                onClick={
+                  (e) => {
+                    const thisCalendarDate = calendarDays[index];
+                    if (selected?.day === thisCalendarDate.day && selected?.month === thisCalendarDate.month && selected?.year === thisCalendarDate.year) {
+                      setSelected(null);
+                    } else {
+                      setSelected(thisCalendarDate);
+                    }
                   }
                 }
-              }
-            >
-              {date.day}
-              <div className="inDayEvents">
-                {date.events.map((event,index) => (<Dot key={index} color={event.color}/>))}
+              >
+                <div className="dayInfo">
+                  <label>{date.day}</label>
+                  {date.weatherEvents && date.active ? <Weather icon={date.weatherEvents.title} temperature={date.weatherEvents.description} /> : ""}
+                
+                </div>
+                <div className="inDayEvents">
+                  {date.events.map((event, index) => (<Dot key={index} color={event.color} />))}
+                </div>
               </div>
-            </div>
             ))
             
-          }
-        </div>
-      </div>
-      {selected !== null ? <Day selected = {selected} setSelected = {setSelected} />: ""}
+            }
+          </div>
+        </div> 
+      {selected !== null ? <Day selected={selected} setSelected={setSelected} /> : ""}
     </div>
-    </EventsContext.Provider>
-  )
+  </EventsContext.Provider>)
 }
