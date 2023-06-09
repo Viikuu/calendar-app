@@ -113,17 +113,31 @@
 }
 
 .selected {
-  border: 2px solid #Daad86;
-  font-weight: bold;
+  border: 1.5px solid #Daad86;
+  background-color: #daad8610;
 }
 
 .noActive {
   border: 1.5px solid #6464647c;
-  color: #6464647c;
+  filter: grayscale(50%);
+  filter: brightness(0.4);
+}
+
+.holiday {
+  border: 1.5px solid red;
+}
+
+.sunday {
+  border: 1.5px solid red;
+}
+
+.saturday {
+  border: 1.5px solid orange;
 }
 
 .isToday {
-  border: 4px solid;
+  border: 1.5px solid;
+  font-weight: bolder;
   color: #659dbd;
   border-color: #659dbd;
 }
@@ -141,4 +155,15 @@ svg {
 
 .loading {
  background: #1a1a1d;
+}
+
+.dayInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dayInfo label {
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
