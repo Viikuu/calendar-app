@@ -1,9 +1,10 @@
 import React from 'react';
 import './Weather.css'
 
-export const Weather: React.FC<{ temperature: string, icon: string }> = ({temperature, icon}) => {
+export const Weather: React.FC<{ size?: string, temperature: string, icon: string, text?: string}> = ({temperature, icon, size, text}) => {
   return (
-      <div className="weather">
+    <div className={`weather  ${size === "big" ? " bigWeather" : ""}`}>
+      {size === "big" ? <h2>{text}</h2> : ""}
       <img className="weatherImage" src={(() => {
         if(['803', '804'].includes(icon)) return 'http://openweathermap.org/img/wn/04d@2x.png';
         if(['800'].includes(icon)) return 'http://openweathermap.org/img/wn/01d@2x.png';

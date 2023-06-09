@@ -16,3 +16,14 @@
   width: 15px;
   height: 15px;
 }
+
+.bigWeather {
+  border-radius: 40px;
+  font-size: medium;
+  padding: 0px 10px;
+}
+
+.bigWeather .weatherImage {
+  width: 40px;
+  height: 40px;
+}

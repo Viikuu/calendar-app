@@ -30,6 +30,10 @@
   justify-content: space-between;
 }
 
+.dayHeader div {
+  right: 10%;
+}
+
 .dayItem {
   display: flex;
   justify-content: space-between;
@@ -72,10 +76,19 @@
   padding-bottom: 0;
   margin:20px;
   left: 0;
-  top: 15%;
+  top: 20%;
   right: 0;
   bottom: 5%;
-  
   overflow-y: auto;
-    
+}
+
+.dayDetailedInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  color: white;
+  font-weight: 900;
+  position: relative;
 }

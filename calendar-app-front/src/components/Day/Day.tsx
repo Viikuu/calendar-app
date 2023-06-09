@@ -5,7 +5,9 @@ import { Months} from "../../configs/Weekdays";
 import { DayEvent, DayEventI } from '../DayEvent/DayEvent';
 import axios from "axios";
 import { mainRoute } from "../../utils/roots";
-import { EventsContext } from "../Calendar";
+import { EventContextType, EventsContext } from "../Calendar";
+import { Weather } from "../Weather/Weather";
+import { UserContext, userContextType } from "../../pages/Main/Main";
 
 interface DayProps {
   selected: CalendarDate,
@@ -30,7 +32,8 @@ const colors = [
 
 export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
-  const { events, setEvents } = useContext(EventsContext);
+  const { events, setEvents } = useContext(EventsContext) as EventContextType; 
+  const { user, setUser } = useContext(UserContext) as userContextType;
 
   const onTitleChangeSave = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const title = event.target.value;
@@ -201,9 +204,14 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
 
   return <div className="dayComponent">
     <div className= "dayHeader">
-      <h2 className="dayInfo"> {selected.year}.{selected.day}.{Months[selected.month]}</h2>  
+      <h2 className="dayDetailedInfo"> {selected.day} {Months[selected.month]} {selected.year}</h2>  
+      {selected.weatherEvents && selected.active && user.showWeather ?
+        <Weather size={'big'} icon={selected.weatherEvents.title} temperature={selected.weatherEvents.description} text={selected.weatherEvents.location} /> :
+        ""}
+      
       <button className="xButton" onClick={(event)=>{setSelected(null)}}>-</button>
     </div>
+    {selected.holidayEvents && selected.active && user.showHolidays ? <div>holiday</div> : <></> }
     <div className="scroll">
       {selected.events.map((event, index) => (
         <DayEvent
