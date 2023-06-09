@@ -117,6 +117,24 @@ export async function getHolidays(fastify, request, reply) {
         )
       ).json();
 
+      getHolidays.filter((holiday) => !holiday.public);
+
+      const getPublicHolidays = await (
+        await fetch(
+          `https://date.nager.at/api/v3/PublicHolidays/${new Date().getFullYear()}/${countryCode}`,
+        )
+      ).json();
+
+      const parsedPublicHolidays = getPublicHolidays.map((holiday) => {
+        return {
+          title: holiday.name,
+          date: new Date(holiday.date),
+          color: '#009900',
+          description: 'Public Holiday',
+          type: 'holiday',
+          location: holiday.countryCode,
+        };
+      });
       const parsedHolidays = getHolidays.map((holiday) => {
         return {
           title: holiday.name,
@@ -126,13 +144,15 @@ export async function getHolidays(fastify, request, reply) {
               holiday.date.substring(3 + 1),
           ),
           color: '#009900',
-          description: holiday.public ? 'Public Holiday' : 'Holiday',
+          description: 'Holiday',
           type: 'holiday',
           location: holiday.country,
         };
       });
 
-      const holidays = await EventModel.insertMany(parsedHolidays);
+      const holidays = await EventModel.insertMany(
+        parsedHolidays.concat(parsedPublicHolidays),
+      );
       return holidays;
     } else {
       return holidaysEvents;
@@ -180,7 +200,7 @@ export async function getWeather(fastify, request, reply) {
           result.weatherdata.forecast[0].time.forEach((forecast) => {
             forecasts.push({
               time: new Date(forecast.$.from),
-              symbol: forecast.symbol[0].$.name,
+              symbol: forecast.symbol[0].$.number,
               temperature: forecast.temperature[0].$.value,
             });
           });

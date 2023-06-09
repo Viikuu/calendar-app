@@ -51,6 +51,10 @@ await fastify.register(fastifyEnv, {
         type: 'string', //https://holidayapi.com/v1/holidays?pretty&key=GEGSAGRGREGBEBGEBERGERGJHGJFHG&country=PL&year=2022
         default: 'https://holidayapi.com/v1/holidays?pretty&key=',
       },
+      HOLIDAY_PUBLIC_API_URL: {
+        type: 'string', //docs https://date.nager.at/swagger/index.html
+        default: 'https://date.nager.at/api/v3/',
+      },
       WEATHER_API_KEY: {
         type: 'string',
         default: 'c1b3f1b3f1b3f1b3f1b3f1b3f1b3f1b3',

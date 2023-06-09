@@ -38,14 +38,12 @@ export const countryRouter = async (fastify, opts, done) => {
 
       const countries = await getCountries();
       if (countries.length === 0) {
-        const { countries: newCountriesPayload } = await (
-          await fetch(
-            `https://holidayapi.com/v1/countries?pretty&key=${fastify.config.HOLIDAY_API_KEY}`,
-          )
+        const newCountriesPayload = await (
+          await fetch(`https://date.nager.at/api/v3/AvailableCountries`)
         ).json();
 
         const newCountries = newCountriesPayload.map((country) => {
-          return { code: country.code, name: country.name };
+          return { code: country.countryCode, name: country.name };
         });
 
         const countries = await CountryModel.insertMany(newCountries);
