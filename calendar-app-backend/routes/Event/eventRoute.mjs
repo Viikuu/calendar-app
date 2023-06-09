@@ -13,7 +13,7 @@ import {
   deleteEventsOpts,
   getEventsByTypeOpts,
   getEventsOpts,
-  getHolidaysEventsOpts,
+  getTypedEventsOpts,
   updateEventsOpts,
 } from './eventOpts.mjs';
 
@@ -26,8 +26,8 @@ export const eventRouter = async (fastify, opts, done) => {
   });
 
   await fastify.get(
-    '/getHolidays',
-    getHolidaysEventsOpts,
+    '/getHolidays/:country',
+    getTypedEventsOpts,
     async function cE(request, reply) {
       const newEvents = await getHolidays(fastify, request, reply);
 
@@ -39,7 +39,7 @@ export const eventRouter = async (fastify, opts, done) => {
 
   await fastify.get(
     '/getWeather',
-    getHolidaysEventsOpts,
+    getTypedEventsOpts,
     async function cE(request, reply) {
       const newEvents = await getWeather(fastify, request, reply);
       return {

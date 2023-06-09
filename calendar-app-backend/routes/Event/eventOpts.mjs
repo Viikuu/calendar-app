@@ -150,7 +150,7 @@ export const deleteEventsOpts = {
   },
 };
 
-export const getHolidaysEventsOpts = {
+export const getTypedEventsOpts = {
   schema: {
     response: {
       200: {

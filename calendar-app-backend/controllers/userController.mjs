@@ -10,7 +10,7 @@ export async function updateUser(request, reply) {
     }
 
     if (country) {
-      const { code } = await CountryModel.find({ name: country });
+      const { code } = await CountryModel.findOne({ name: country });
       parsedUserData['countryCode'] = code;
       parsedUserData['country'] = country;
     }

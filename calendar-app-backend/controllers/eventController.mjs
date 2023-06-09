@@ -1,6 +1,7 @@
 import xml2js from 'xml2js';
 import { EventModel } from '../db/models/Events.mjs';
 import { getUser } from './authController.mjs';
+import { CountryModel } from '../db/models/Country.mjs';
 
 export async function getEvents(request, reply) {
   try {
@@ -101,13 +102,12 @@ export async function deleteEvent(request, reply) {
 
 export async function getHolidays(fastify, request, reply) {
   try {
-    const { countryCode = 'PL' } = await getUser(request, reply);
-
+    const { country } = request.params;
+    const { code: countryCode } = await CountryModel.findOne({ name: country });
     const holidaysEvents = await EventModel.find({
       location: countryCode,
       type: 'holiday',
     }).exec();
-
     if (holidaysEvents.length === 0) {
       const { holidays: getHolidays } = await (
         await fetch(
@@ -116,7 +116,6 @@ export async function getHolidays(fastify, request, reply) {
           }&country=${countryCode}&year=${new Date().getFullYear() - 1}`,
         )
       ).json();
-
       getHolidays.filter((holiday) => !holiday.public);
 
       const getPublicHolidays = await (
@@ -149,11 +148,17 @@ export async function getHolidays(fastify, request, reply) {
           location: holiday.country,
         };
       });
+      const tempConcatHolidays = parsedHolidays.concat(parsedPublicHolidays);
 
-      const holidays = await EventModel.insertMany(
-        parsedHolidays.concat(parsedPublicHolidays),
+      const unique = tempConcatHolidays.filter(
+        (obj, index) =>
+          tempConcatHolidays.findIndex(
+            (item) => item.title === obj.title && item.date === obj.date,
+          ) === index,
       );
-      return holidays;
+      const data = await EventModel.insertMany(unique);
+
+      return unique;
     } else {
       return holidaysEvents;
     }
@@ -165,7 +170,7 @@ export async function getHolidays(fastify, request, reply) {
 
 export async function getWeather(fastify, request, reply) {
   try {
-    const { city = 'Lublin' } = await getUser(request, reply);
+    const { city } = await getUser(request, reply);
     if (!city) {
       return reply.code(404).send({ message: 'Users City not found!' });
     }
@@ -180,7 +185,6 @@ export async function getWeather(fastify, request, reply) {
         $gte: today,
       },
     }).exec();
-
     if (weatherEvents.length < 6) {
       const geoLoc = await (
         await fetch(`https://geocode.maps.co/search?q={${city}}`)
@@ -191,22 +195,22 @@ export async function getWeather(fastify, request, reply) {
           `https://api.openweathermap.org/data/2.5/forecast?lat=${geoLoc[0].lat}&lon=${geoLoc[0].lon}&mode=xml&appid=${fastify.config.WEATHER_API_KEY}`,
         )
       ).text();
-
-      xml2js.parseString(xmlString, async (error, result) => {
-        if (error) {
-          console.error('Error parsing XML:', error);
-        } else {
+      return await new Promise((resolve, reject) => {
+        xml2js.parseString(xmlString, async (error, result) => {
+          if (error) {
+            return reject(error);
+          }
           let forecasts = [];
-          result.weatherdata.forecast[0].time.forEach((forecast) => {
+          for (const forecast of result.weatherdata.forecast[0].time) {
             forecasts.push({
               time: new Date(forecast.$.from),
               symbol: forecast.symbol[0].$.number,
               temperature: forecast.temperature[0].$.value,
             });
-          });
+          }
 
           const resultFor = [];
-          for (let i = 0; i < 6; i++) {
+          for (let i = 0; i < 5; i++) {
             const date = new Date(today.getTime() + i * 24 * 60 * 60 * 1000);
             const group = forecasts.filter(
               (forecast) => forecast.time.getDate() === date.getDate(),
@@ -244,40 +248,25 @@ export async function getWeather(fastify, request, reply) {
               type: 'weather',
             };
           });
+          let newEvents = [];
           for (let weather of parsedWeather) {
-            if (
-              weatherEvents.some(
-                (event) =>
-                  event.date.getFullYear() === weather.date.getFullYear() &&
-                  event.date.getMonth() === weather.date.getMonth() &&
-                  event.date.getDate() === weather.date.getDate(),
-              )
-            ) {
-              const newWeather = await EventModel.findOneAndUpdate(
-                {
-                  location: city,
-                  type: 'weather',
-                  date: weather.date,
-                },
-                { ...weather },
-                {
-                  new: true,
-                },
-              );
-            } else {
-              const newWeather = new EventModel({ ...weather });
-              await newWeather.save();
-            }
+            const newWeather = await EventModel.findOneAndUpdate(
+              {
+                location: city,
+                type: 'weather',
+                date: weather.date,
+              },
+              { ...weather },
+              {
+                new: true,
+                upsert: true,
+              },
+            );
+            newEvents.push(newWeather);
           }
-        }
+          resolve(newEvents);
+        });
       });
-      return await EventModel.find({
-        location: city,
-        type: 'weather',
-        date: {
-          $gte: new Date(),
-        },
-      }).exec();
     } else {
       return weatherEvents;
     }

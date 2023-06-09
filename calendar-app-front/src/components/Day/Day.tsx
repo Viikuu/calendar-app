@@ -213,7 +213,7 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
     </div>
     {selected.holidayEvents && selected.active && user.showHolidays
       ? selected.holidayEvents.map((holiday, index) => (
-        <div className="holidayInfo">
+        <div className="holidayInfo" key={index}>
           {holiday.title}
         </div>
       ))

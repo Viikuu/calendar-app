@@ -98,9 +98,8 @@ export const Calendar: React.FC = () => {
   }
 
   async function getTypedEvents(type: string) { //getWeather, getHolidays
-    const { data: { events } } = await axios.get<getEventsType>([mainRoute, 'events', type].join('/'), { withCredentials: true });
-    const fetchedEvents = parseDate(events);
-    console.log(fetchedEvents);
+    const data = await axios.get<getEventsType>([mainRoute, 'events', type].join('/'), { withCredentials: true });
+    const fetchedEvents = parseDate(data.data.events);
     return fetchedEvents;
   }
 
@@ -110,7 +109,7 @@ export const Calendar: React.FC = () => {
         setWeatherEvents(await getTypedEvents('getWeather'));
       }
       if (user.showHolidays) {
-        setHolidayEvents(await getTypedEvents('getHolidays'));
+        setHolidayEvents(await getTypedEvents(`getHolidays/${user.country}`));
       }
       const { data: { events } } = await axios.get<getEventsType>([mainRoute, 'events'].join('/'), { withCredentials: true });
       const fetchedEvents = parseDate(events);
@@ -124,7 +123,7 @@ export const Calendar: React.FC = () => {
   useEffect(() => {
     if (user.showHolidays && !loading) {
       (async () => { 
-        setHolidayEvents(await getTypedEvents('getHolidays'));
+        setHolidayEvents(await getTypedEvents(`getHolidays/${user.country}`));
       })();
     } else {
       setHolidayEvents([]);

@@ -9,8 +9,9 @@ export async function createUser(request, reply, fastify) {
     const newUser = new UserModel({
       password: hashedPass,
       email,
-      city: '',
-      country: '',
+      city: 'Lublin',
+      country: 'Poland',
+      countryCode: 'PL',
       showHolidays: false,
       showWeather: false,
     });
