@@ -211,7 +211,13 @@ export const Day: React.FC<DayProps> = ({ selected, setSelected }) => {
       
       <button className="xButton" onClick={(event)=>{setSelected(null)}}>-</button>
     </div>
-    {selected.holidayEvents && selected.active && user.showHolidays ? <div>holiday</div> : <></> }
+    {selected.holidayEvents && selected.active && user.showHolidays
+      ? selected.holidayEvents.map((holiday, index) => (
+        <div className="holidayInfo">
+          {holiday.title}
+        </div>
+      ))
+      : <></>}
     <div className="scroll">
       {selected.events.map((event, index) => (
         <DayEvent

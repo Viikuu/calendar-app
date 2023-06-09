@@ -12,6 +12,9 @@
 }
 
 .xButton {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
   background-color: white;
   width:30px;
   height: 30px;
@@ -22,7 +25,6 @@
   color: black;
   cursor: pointer;
   margin:10px;
-  
 }
 
 .dayHeader {
@@ -91,4 +93,9 @@
   color: white;
   font-weight: 900;
   position: relative;
+}
+.holidayInfo {
+  font-size: medium;
+  color: red;
+  
 }
