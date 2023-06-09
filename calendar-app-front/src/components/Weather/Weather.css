@@ -1,0 +1,18 @@
+.weather {
+  position: relative;
+  border: 1px solid #ccc;
+  font-size: smaller;
+  font-family: Arial, sans-serif;
+  border-radius: 15px;
+  padding: 3px;
+  filter: invert(60%) contrast(200%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #Daad86;
+}
+
+.weatherImage {
+  width: 15px;
+  height: 15px;
+}
