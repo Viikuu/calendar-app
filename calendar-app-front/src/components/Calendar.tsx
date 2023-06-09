@@ -129,7 +129,7 @@ export const Calendar: React.FC = () => {
     } else {
       setHolidayEvents([]);
     }
-  }, [user.showHolidays]);
+  }, [user.showHolidays, user.country]);
 
   useEffect(() => {
     if (user.showWeather && !loading) {
@@ -139,13 +139,12 @@ export const Calendar: React.FC = () => {
     } else {
       setWeatherEvents([]);
     }
-  }, [user.showWeather]);
+  }, [user.showWeather, user.city]);
   
   useEffect(() => {
     const dt = new Date();
     (async () => {
       await getEvents();
-      console.log(123);
       setLoading(false);
     })();
     
@@ -156,14 +155,21 @@ export const Calendar: React.FC = () => {
   useEffect(() => {
     const dt = new Date(year, month);
     genDays(dt);
-  }, [year, month, loading]);
+    if (selected !== null) {
+      setSelected({
+        ...selected,
+        weatherEvents: weatherEvents.filter(event => event.date.getDate() === selected.day && event.date.getMonth() === selected.month && event.date.getFullYear() === selected.year)[0],
+        holidayEvents: [...holidayEvents.filter(event => event.date.getDate() === selected.day && event.date.getMonth() === selected.month && event.date.getFullYear() === selected.year)],
+      });
+    }
+  }, [year, month, weatherEvents, holidayEvents, loading]);
 
   useEffect(() => {
     if (selected !== null && prevSelectedRef.current !== null) {
-      setCalendarDays(calendarDays.map(el => el.day === selected.day && el.month === selected.month && el.year == selected.year ? selected : el));
+      setCalendarDays(calendarDays.map(el => el.day === selected.day && el.month === selected.month && el.year == selected.year ? {...el,events: selected.events } : el));
     }
     prevSelectedRef.current = selected;
-  }, [selected]);
+  }, [selected?.events]);
 
   const decreaseMonth = () => {
     setMonth(() => month - 1);
@@ -213,7 +219,7 @@ export const Calendar: React.FC = () => {
               >
                 <div className="dayInfo">
                   <label>{date.day}</label>
-                  {date.weatherEvents && date.active ? <Weather icon={date.weatherEvents.title} temperature={date.weatherEvents.description} /> : ""}
+                  {date.weatherEvents && date.active ? <Weather icon={date.weatherEvents.title} temperature={date.weatherEvents.description}/> : ""}
                 
                 </div>
                 <div className="inDayEvents">

@@ -44,7 +44,7 @@ export const Navbar: React.FC = () => {
       <Modal show={show} setShow={setShow}>
         <div className='setOpts'>
           <div className='opt'>
-            <label>Country</label>
+            <label>Holidays Country</label>
             <select value={user.country} onChange={async (e) => {
               setUser({ ...user, country: e.target.value });
               await axios.put<userData>([mainRoute, 'user'].join('/'), { country: e.target.value }, { withCredentials: true });
@@ -55,7 +55,7 @@ export const Navbar: React.FC = () => {
             </select>
           </div>
           <div className='opt'>
-            <label>City</label>
+            <label>Weather City</label>
             <input type="text" id='city' value={city} onChange={async (e) => {
               setCity(e.target.value);
             }} onBlur={async (e) => {
@@ -74,15 +74,16 @@ export const Navbar: React.FC = () => {
           </div>
           <div className='opt'>
             <label>Show weather</label>
-            <input type="checkbox" id='weather' defaultChecked={user.showWeather} onChange={() => {
+            <input type="checkbox" id='weather' defaultChecked={user.showWeather} onChange={async () => {
               setUser({...user, showWeather: !user.showWeather})
-
+              await axios.put<userData>([mainRoute, 'user'].join('/'), { showWeather: !user.showWeather }, { withCredentials: true });
             }} />
           </div>
           <div className='opt'>
             <label>Show holidays</label>
-            <input type="checkbox" id='holidays' defaultChecked={user.showHolidays} onChange={() => {
-              setUser({...user, showHolidays: !user.showHolidays})
+            <input type="checkbox" id='holidays' defaultChecked={user.showHolidays} onChange={async () => {
+              setUser({ ...user, showHolidays: !user.showHolidays })
+              await axios.put<userData>([mainRoute, 'user'].join('/'), { showHolidays: !user.showHolidays }, { withCredentials: true });
             }} />
           </div>
           <ToastContainer/>

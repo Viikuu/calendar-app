@@ -15,13 +15,14 @@ export async function updateUser(request, reply) {
       parsedUserData['country'] = country;
     }
 
-    if (showHolidays) {
+    if (typeof showHolidays === 'boolean') {
       parsedUserData['showHolidays'] = showHolidays;
     }
 
-    if (showWeather) {
+    if (typeof showWeather === 'boolean') {
       parsedUserData['showWeather'] = showWeather;
     }
+    console.log(parsedUserData);
     const { _doc: existingUser } = await UserModel.findByIdAndUpdate(
       { _id: request.user._id },
       parsedUserData,
