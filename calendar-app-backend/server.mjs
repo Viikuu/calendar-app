@@ -103,6 +103,8 @@ fastify.register(async (fastify, opts, done) => {
   done();
 });
 
+await fastify.after();
+
 const start = async () => {
   try {
     await fastify.listen({
