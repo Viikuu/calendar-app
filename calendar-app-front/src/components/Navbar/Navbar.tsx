@@ -8,6 +8,7 @@ import { UserContext, userContextType } from '../../pages/Main/Main';
 import { useEffect } from 'react';
 import { countriesType, userData } from '../../utils/types';
 import {toast, ToastContainer, ToastOptions} from 'react-toastify';
+import { AddEvent } from '../AddEvent/AddEvent';
 
 const toastOptions: ToastOptions = {
 		position: 'top-right',
@@ -19,7 +20,8 @@ const toastOptions: ToastOptions = {
 
 export const Navbar: React.FC = () => {
   const { user, setUser } = useContext(UserContext) as userContextType;
-  const [show, setShow] = useState<boolean>(false);
+  const [showOpts, setShowOpts] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
   const [countries, setCountries] = useState<Array<countriesType>>([]);
   const [city, setCity] = useState<string>('');
 
@@ -32,16 +34,27 @@ export const Navbar: React.FC = () => {
       <div></div>
       <div></div>
       <div className='navButtons'>
-        <button onClick={async e => {
-          setShow(true);
+        <button className='opts' onClick={async e => {
+          setShowMenu(true);
+        }}
+        > + Add Event Menu </button>
+
+        <button className='opts' onClick={async e => {
+          setShowOpts(true);
           const { data: { countries } } = await axios.get<{ countries: Array<countriesType> }>([mainRoute, 'countries'].join('/'), { withCredentials: true });
 
           setCountries(countries);
         }}
         > Options </button>
+
         <Logout />
       </div>
-      <Modal show={show} setShow={setShow}>
+      <Modal show={showMenu} setShow={setShowMenu}>
+          <AddEvent setShow={setShowMenu}/>
+          <ToastContainer/>
+      </Modal>
+
+      <Modal show={showOpts} setShow={setShowOpts}>
         <div className='setOpts'>
           <div className='opt'>
             <label>Holidays Country</label>

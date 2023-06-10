@@ -8,7 +8,6 @@
   height: 100%;
   overflow: auto;
   background-color: rgb(0, 0, 0);
-
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
@@ -16,28 +15,28 @@
   align-items: center;
 }
 
+.closeModal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: black;
+}
+
 /* Modal Content/Box */
 .modal-content {
   position: relative;
-  height: 15rem;
-  width: 30rem;
+  padding:3%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top:0;
+  margin-top:-5%;
   align-items: center;
   background-color: #1a1a1d;
   border: 1px solid #888;
   border-radius: 10px;
 }
 
-.closeModal {
-  position: absolute;
-  top:0;
-  right: 0;
-  color: black;
 
-}
 .bar {
   position: absolute;
   top: 0;

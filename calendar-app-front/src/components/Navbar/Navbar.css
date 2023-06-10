@@ -27,3 +27,14 @@
   margin: auto;
 }
 
+.opts {
+  color: white;
+  padding: 0.5rem;
+  margin: 1rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+
