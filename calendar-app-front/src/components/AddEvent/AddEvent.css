@@ -1,0 +1,57 @@
+.repetability {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.repetability > label input {	
+  margin: 5px;
+}
+
+.addEvent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.addEvent select {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.4rem;
+}
+
+.addEvent button {
+  color: white;
+  padding: 0.3rem 0.5rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+.termins {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.termins label {
+  margin: 0.7rem;
+}
+
+.terminsParent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.terminInfo{
+  color:cadetblue;
+  font-size: 1.2rem;
+}
