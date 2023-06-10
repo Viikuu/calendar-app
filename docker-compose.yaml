@@ -5,6 +5,9 @@ services:
     build: ./calendar-app-backend
     environment:
         - DATABASE_HOST=mongodb://mongodb:27017/calendar?authSource=admin
+        - HOLIDAY_API_KEY = fagsfgdfgsdfg
+        - WEATHER_API_KEY = 8agsgfasdgasdgsadgsadg
+        - HOLIDAY_PUBLIC_API_URL = https://date.nager.at/api/v3/publicholidays
     ports:
       - '3000:3000'
     depends_on:
