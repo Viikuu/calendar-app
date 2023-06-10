@@ -1,8 +1,11 @@
 import {
   createEvent,
+  createManyEvent,
+  createRepetableEvent,
   deleteEvent,
   getEvents,
   getEventsByType,
+  getEventsTermins,
   getHolidays,
   getWeather,
   updateEvent,
@@ -89,6 +92,28 @@ export const eventRouter = async (fastify, opts, done) => {
       return { event: deletedEvent };
     },
   );
+
+  await fastify.post('/repetable', async function cE(request, reply) {
+    const newEvents = await createRepetableEvent(request, reply);
+    console.log(newEvents);
+    return {
+      events: newEvents,
+    };
+  });
+
+  await fastify.post('/travel', async function cE(request, reply) {
+    const newEvents = await createManyEvent(request, reply);
+    return {
+      events: newEvents,
+    };
+  });
+
+  await fastify.get('/termin/:type', async function cE(request, reply) {
+    const terms = await getEventsTermins(request, reply);
+    return {
+      termins: terms,
+    };
+  });
 
   done();
 };

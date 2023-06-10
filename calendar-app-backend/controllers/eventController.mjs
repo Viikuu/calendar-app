@@ -168,13 +168,22 @@ export async function getHolidays(fastify, request, reply) {
   }
 }
 
-export async function getWeather(fastify, request, reply) {
+async function checkUserCity(request, reply) {
   try {
     const { city } = await getUser(request, reply);
     if (!city) {
       return reply.code(404).send({ message: 'Users City not found!' });
+    } else {
+      return city;
     }
-
+  } catch (error) {
+    console.log(error);
+    throw new Error('Something went wrong! Try again');
+  }
+}
+export async function getWeather(fastify, request, reply) {
+  try {
+    const city = await checkUserCity(request, reply);
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -270,6 +279,247 @@ export async function getWeather(fastify, request, reply) {
     } else {
       return weatherEvents;
     }
+  } catch (error) {
+    console.log(error);
+    throw new Error('Something went wrong! Try again');
+  }
+}
+
+function genDay(i) {
+  const currentDate = new Date();
+  return new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate() + i,
+  );
+}
+function genDates() {
+  const dates = [];
+  for (let i = 1; i < 7; i++) {
+    // Calculate the date by adding the current iteration index to the current date
+    const date = genDay(i);
+
+    // Generate hours from 6 to 20
+    for (let hour = 6; hour <= 20; hour++) {
+      const day = date.getDate();
+      const formattedHour = hour;
+      const dateObject = { day, hour: formattedHour };
+      dates.push(dateObject);
+    }
+  }
+  return dates;
+}
+
+function formatFreeDates(array) {
+  function formatRange(start, end) {
+    return start === end ? start.toString() : `${start}-${end}`;
+  }
+  function formatArr(nums) {
+    let ranges = [];
+    let start = nums[0];
+    let end = nums[0];
+
+    for (let i = 1; i < nums.length; i++) {
+      if (nums[i] === end + 1) {
+        end = nums[i];
+      } else {
+        if (start === end) {
+          ranges.push(start.toString());
+        } else {
+          ranges.push(`${start}-${end}`);
+        }
+        start = nums[i];
+        end = nums[i];
+      }
+    }
+
+    if (start === end) {
+      ranges.push(start);
+    } else {
+      ranges.push(`${start}-${end}`);
+    }
+
+    return ranges.join(', ');
+  }
+
+  let days = [];
+  for (let i = 1; i < 7; i++) {
+    // Calculate the date by adding the current iteration index to the current date
+    const date = genDay(i);
+    days.push(date.getDate());
+  }
+
+  return days
+    .map((day) => {
+      return {
+        day,
+        hours: formatArr(
+          array.filter((date) => date.day === day).map((day) => day.hour),
+        ),
+      };
+    })
+    .filter((day) => day.hours !== '');
+}
+
+export async function getEventsTermins(request, reply) {
+  try {
+    const { type } = request.params;
+    if (type === 'OutdoorSports' || type === 'IndoorSports') {
+      const eventData = await EventModel.find({
+        userId: request.user._id,
+        date: {
+          $gte: new Date(),
+          $lte: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+        },
+      }).exec();
+      const dates = genDates();
+
+      if (type === 'OutdoorSports') {
+        const city = await checkUserCity(request, reply);
+        const weatherEvents = await EventModel.find({
+          location: city,
+          type: 'weather',
+          date: {
+            $gte: new Date(),
+          },
+        }).exec();
+
+        const getWeather = weatherEvents.filter(
+          (weather) =>
+            Number(
+              weather.description.substring(0, weather.description.length - 2),
+            ) > 15 &&
+            Number(
+              weather.description.substring(0, weather.description.length - 2),
+            ) < 30 &&
+            ['800', '801', '802', '803', '804'].some(
+              (el) => el === weather.title,
+            ),
+        );
+        const takenDates = eventData
+          .filter((event) =>
+            getWeather.some((el) => el.date.getDate() === event.date.getDate()),
+          )
+          .map((event) => {
+            return { day: event.date.getDate(), hour: event.date.getHours() };
+          });
+        const freeDates = dates
+          .filter((event) =>
+            getWeather.some((el) => el.date.getDate() === event.day),
+          )
+          .filter(
+            (date) =>
+              !takenDates.some(
+                (el) => el.day === date.day && el.hour === date.hour,
+              ),
+          );
+        return formatFreeDates(freeDates);
+      } else if (type === 'IndoorSports') {
+        const takenDates = eventData.map((event) => {
+          return { day: event.date.getDate(), hour: event.date.getHours() };
+        });
+        const freeDates = dates.filter(
+          (date) =>
+            !takenDates.some(
+              (el) => el.day === date.day && el.hour === date.hour,
+            ),
+        );
+        return formatFreeDates(freeDates);
+      }
+    } else if (type === 'Travel') {
+      const { country } = await getUser(request, reply);
+      const { code: countryCode } = await CountryModel.findOne({
+        name: country,
+      });
+      const getPublicHolidays = await (
+        await fetch(
+          `https://date.nager.at/api/v3/LongWeekend/${new Date().getFullYear()}/${countryCode}`,
+        )
+      ).json();
+      return getPublicHolidays;
+    } else {
+      return reply.code(404).send({ message: 'Type not found!' });
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error('Something went wrong! Try again');
+  }
+}
+
+export async function createManyEvent(request, reply) {
+  try {
+    const { event, days } = request.body;
+    const events = [];
+    for (let i = 0; i < days; i++) {
+      const newEvent = {
+        userId: request.user._id,
+        ...event,
+        date: new Date(
+          new Date(event.date).getTime() + i * 24 * 60 * 60 * 1000,
+        ),
+      };
+      events.push(newEvent);
+    }
+    await EventModel.insertMany(events);
+    return events;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Something went wrong! Try again');
+  }
+}
+
+export async function createRepetableEvent(request, reply) {
+  try {
+    const { event, repeatTimes, repetability } = request.body;
+    const events = [];
+    const date = new Date(event.date);
+    console.log(repetability);
+    console.log(repeatTimes);
+    if (repetability === 'Weekly') {
+      for (let i = 0; i < repeatTimes; i++) {
+        const newEvent = {
+          userId: request.user._id,
+          ...event,
+          date: new Date(
+            new Date(event.date).getTime() + i * 7 * 24 * 60 * 60 * 1000,
+          ),
+        };
+        events.push(newEvent);
+      }
+    } else if (repetability === 'Monthly') {
+      for (let i = 0; i < repeatTimes; i++) {
+        const newEvent = {
+          userId: request.user._id,
+          ...event,
+          date: new Date(
+            date.getFullYear(),
+            date.getMonth() + i,
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes(),
+          ),
+        };
+        events.push(newEvent);
+      }
+    } else if (repetability === 'Yearly') {
+      for (let i = 0; i < repeatTimes; i++) {
+        const newEvent = {
+          userId: request.user._id,
+          ...event,
+          date: new Date(
+            date.getFullYear() + i,
+            date.getMonth(),
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes(),
+          ),
+        };
+        events.push(newEvent);
+      }
+    }
+    console.log(events);
+    const newEvents = await EventModel.insertMany(events);
+    return newEvents;
   } catch (error) {
     console.log(error);
     throw new Error('Something went wrong! Try again');
