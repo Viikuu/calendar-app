@@ -5,11 +5,11 @@ import { Day } from "./Day/Day";
 import { Dot } from "./Dot/Dot";
 import axios from "axios";
 import { mainRoute } from "../utils/roots";
-import { UserContext, userContextType } from "../pages/Main/Main";
+import { EventsContext, UserContext, userContextType } from "../pages/Main/Main";
 import { useNavigate } from "react-router-dom";
 import { Weather } from "./Weather/Weather";
 
-export const EventsContext = createContext<EventContextType | null>(null);
+
 
 export type EventContextType = {
   events: Array<DayEventI>,
@@ -20,7 +20,6 @@ export const Calendar: React.FC = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [events, setEvents] = useState<Array<DayEventI>>([]);
   const [weatherEvents, setWeatherEvents] = useState<Array<DayEventI>>([]);
   const [holidayEvents, setHolidayEvents] = useState<Array<DayEventI>>([]);
   const [selected, setSelected] = useState<CalendarDate | null>(null);
@@ -29,7 +28,7 @@ export const Calendar: React.FC = () => {
   const [calendarDays, setCalendarDays] = useState<CalendarDate[]>([]);
 
   const { user, setUser } = useContext(UserContext) as userContextType;
-
+  const { events, setEvents } = useContext(EventsContext) as EventContextType;
   const prevSelectedRef = useRef<CalendarDate | null>(null);
 
   interface getEventsType {
@@ -120,6 +119,11 @@ export const Calendar: React.FC = () => {
     }
   }
 
+  useEffect(() => { 
+    console.log(events);
+    
+  }, [events]);
+
   useEffect(() => {
     if (user.showHolidays && !loading) {
       (async () => { 
@@ -161,7 +165,7 @@ export const Calendar: React.FC = () => {
         holidayEvents: [...holidayEvents.filter(event => event.date.getDate() === selected.day && event.date.getMonth() === selected.month && event.date.getFullYear() === selected.year)],
       });
     }
-  }, [year, month, weatherEvents, holidayEvents, loading]);
+  }, [year, month, weatherEvents, holidayEvents, loading, events.length]);
 
   useEffect(() => {
     if (selected !== null && prevSelectedRef.current !== null) {
@@ -178,7 +182,7 @@ export const Calendar: React.FC = () => {
     setMonth(() => month + 1);
   }
   return (
-  <EventsContext.Provider value={{ events, setEvents }}>
+  
     <div className="calendar-container">
       
         <div className="datepicker-container">
@@ -231,6 +235,5 @@ export const Calendar: React.FC = () => {
           </div>
         </div> 
       {selected !== null ? <Day selected={selected} setSelected={setSelected} /> : ""}
-    </div>
-  </EventsContext.Provider>)
+    </div>)
 }

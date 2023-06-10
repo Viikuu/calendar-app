@@ -5,9 +5,9 @@ import { Months} from "../../configs/Weekdays";
 import { DayEvent, DayEventI } from '../DayEvent/DayEvent';
 import axios from "axios";
 import { mainRoute } from "../../utils/roots";
-import { EventContextType, EventsContext } from "../Calendar";
+import { EventContextType } from "../Calendar";
 import { Weather } from "../Weather/Weather";
-import { UserContext, userContextType } from "../../pages/Main/Main";
+import { EventsContext, UserContext, userContextType } from "../../pages/Main/Main";
 
 interface DayProps {
   selected: CalendarDate,
