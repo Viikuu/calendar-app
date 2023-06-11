@@ -1,7 +1,7 @@
 import { CountryModel } from '../../db/models/Country.mjs';
 import { EventModel } from '../../db/models/Events.mjs';
 
-async function getCountries(fastify) {
+async function getCountriesD() {
   try {
     const countries = await CountryModel.find().exec();
     return countries;
@@ -11,7 +11,7 @@ async function getCountries(fastify) {
 }
 
 export async function getCountriesData(apiKey) {
-  const countries = await getCountries();
+  const countries = await getCountriesD();
   if (countries.length === 0) {
     const newCountriesPayload = await (
       await fetch(`https://date.nager.at/api/v3/AvailableCountries`)
@@ -75,9 +75,10 @@ export async function getCountriesData(apiKey) {
             (item) => item.title === obj.title && item.date === obj.date,
           ) === index,
       );
-      await EventModel.insertMany(unique);
+      const countries = await EventModel.insertMany(unique);
     }
   }
+  return countries;
 }
 
 export const countryRouter = async (fastify, opts, done) => {
@@ -107,10 +108,10 @@ export const countryRouter = async (fastify, opts, done) => {
       },
     },
     async function getCountries() {
-      const countries = await getCountries();
+      const countries = await getCountriesD();
       if (countries.length === 0) {
-        await getCountriesData();
-        const countries = await getCountries();
+        await getCountriesData(fastify.config.HOLIDAY_API_KEY);
+        const countries = await getCountriesD();
         return { countries };
       } else {
         return { countries };
