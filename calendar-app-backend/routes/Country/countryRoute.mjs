@@ -78,7 +78,6 @@ export async function getCountriesData(apiKey) {
       const countries = await EventModel.insertMany(unique);
     }
   }
-  return countries;
 }
 
 export const countryRouter = async (fastify, opts, done) => {
