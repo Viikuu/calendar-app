@@ -119,11 +119,6 @@ export const Calendar: React.FC = () => {
     }
   }
 
-  useEffect(() => { 
-    console.log(events);
-    
-  }, [events]);
-
   useEffect(() => {
     if (user.showHolidays && !loading) {
       (async () => { 

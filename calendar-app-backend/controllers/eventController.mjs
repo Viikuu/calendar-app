@@ -2,6 +2,7 @@ import xml2js from 'xml2js';
 import { EventModel } from '../db/models/Events.mjs';
 import { getUser } from './authController.mjs';
 import { CountryModel } from '../db/models/Country.mjs';
+import { log } from 'console';
 
 export async function getEvents(request, reply) {
   try {
@@ -460,8 +461,8 @@ export async function createManyEvent(request, reply) {
       };
       events.push(newEvent);
     }
-    await EventModel.insertMany(events);
-    return events;
+    const newEvents = await EventModel.insertMany(events);
+    return newEvents;
   } catch (error) {
     console.log(error);
     throw new Error('Something went wrong! Try again');

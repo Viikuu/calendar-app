@@ -2,11 +2,11 @@ import React from 'react';
 import axios from 'axios';
 import { DayEvent } from '../../DayEvent/DayEvent';
 import { useEffect } from 'react';
-import { DayEventI, Weekday, parseDate } from '../../../utils/types';
+import { DayEventI, Month, Weekday, parseDate } from '../../../utils/types';
 import { EventsContext } from '../../../pages/Main/Main';
 import { EventContextType } from '../../Calendar';
 import { mainRoute } from '../../../utils/roots';
-import { Weekdays } from '../../../configs/Weekdays';
+import { Months, Weekdays } from '../../../configs/Weekdays';
 
 type CreateEventProps = {
   eventType: string,
@@ -29,13 +29,6 @@ export const CreateEvent: React.FC<CreateEventProps> = ({ eventType, repetabilit
               type: eventType,
     } as DayEventI)
   }, [eventType])
-
-  useEffect(() => {
-    console.log(repeatableDate);
-    console.log(event);
-    console.log(repeatTimes);
-    
-  }, [event, repeatableDate, repeatTimes]);
   
   function onTitleChange(ev) { 
     setEvent({...event, title: ev.target.value} as DayEventI);
@@ -77,6 +70,7 @@ export const CreateEvent: React.FC<CreateEventProps> = ({ eventType, repetabilit
           let newEvent = { ...event };
           let sendRepeatTimes = repeatTimes;
           if (repetability === 'Weekly') {
+            console.log(312312312)
             const firstDay = (new Date(new Date().getFullYear(), new Date().getMonth(), 1 )).toLocaleDateString('en', {
               weekday: 'long',
               year: 'numeric',
@@ -84,10 +78,13 @@ export const CreateEvent: React.FC<CreateEventProps> = ({ eventType, repetabilit
               day: 'numeric',
             });
             const paddingDays = Weekdays.indexOf(firstDay.split(', ')[0] as Weekday);
-
-            const dayIndex = Weekdays.indexOf(repeatableDate.dayName as Weekday);
-            const additionalDays = (new Date().getDate())/7;
-            const firstDayE = (new Date(new Date().getFullYear(), new Date().getMonth(), 1 + paddingDays + additionalDays, event.date.getHours(), event.date.getMinutes()));
+            
+            const dayIndex = Weekdays.indexOf(repeatableDate.dayName as Weekday);          
+            const additionalDays = Math.ceil((new Date().getDate()) / 7);
+            
+            const day = (1 + dayIndex - paddingDays + 7 * additionalDays)
+            const firstDayE = (new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() > day ? day + 7 : day , event.date.getHours(), event.date.getMinutes()));
+            
             newEvent = {
               ...event,
               date: firstDayE
@@ -102,7 +99,7 @@ export const CreateEvent: React.FC<CreateEventProps> = ({ eventType, repetabilit
               date: new Date(new Date().getFullYear(), new Date().getMonth(), Number(repeatableDate.day), event.date.getHours(), event.date.getMinutes())
             };
           } else if (repetability === 'Yearly') {
-            const month = Weekdays.indexOf(repeatableDate.month as Weekday)
+            const month = Months.indexOf(repeatableDate.month as Month)
             if (new Date().getMonth() > month) {
               sendRepeatTimes++;
             }

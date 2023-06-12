@@ -116,8 +116,11 @@ export const GeneratedEvent: React.FC<GeneratedEventProps> = ({ eventType, setSh
               ...event,
               date: (new Date(event.date.getFullYear(), Months.indexOf(date.month as Month), Number(date.day), event.date.getHours(), event.date.getMinutes())),
             }
+            
             try {
               const response = await axios.post(`${mainRoute}/events/travel`, { event: { ...createdEvent }, days }, { withCredentials: true });
+              console.log(response.data.events);
+              
               setEvents([...events, ...parseDate(response.data.events)]);
             } catch (err) {
               console.log(err);
