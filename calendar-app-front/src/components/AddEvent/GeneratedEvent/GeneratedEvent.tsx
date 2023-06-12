@@ -55,7 +55,7 @@ export const GeneratedEvent: React.FC<GeneratedEventProps> = ({ eventType, setSh
     <>
       <div>
         {termins && (eventType !== 'Travel') && (<>          
-          <label className='terminInfo'>Free termins within this week with good weather for outdoor sports!</label>
+          <label className='terminInfo'>Free termins within this week with good weather for {eventType}!</label>
           {termins.map((termin, index) => {
             return <div className={'termins'} key={index}>
               <div>
