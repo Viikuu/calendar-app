@@ -14,6 +14,7 @@ export const mongooseConn = fp(function mongooseConn(fastify, options, done) {
       await getCountriesData(fastify.config.HOLIDAY_API_KEY);
       console.log('Countries data fetched');
     } catch (error) {
+      console.log(error);
       console.log(error.stack);
       console.log("Couldn't connect to db");
     }
